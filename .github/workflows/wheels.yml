@@ -18,22 +18,12 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Install dependencies
-          run: |
-            if [ "${{ runner.os }}" == "Linux" ]; then
-              sudo apt-get update
-              sudo apt-get install -y patchelf perl perl-modules build-essential pkg-config libssl-dev cpanminus
-              export OPENSSL_DIR=/usr/lib/ssl
-              echo "OPENSSL_DIR=/usr/lib/ssl" >> $GITHUB_ENV
-            elif [ "${{ runner.os }}" == "Windows" ]; then
-              git clone https://github.com/Microsoft/vcpkg C:\vcpkg
-              C:\vcpkg\bootstrap-vcpkg.bat
-              C:\vcpkg\vcpkg.exe install openssl:x64-windows
-              echo "VCPKG_ROOT=C:\vcpkg" >> $env:GITHUB_ENV
-              echo "OPENSSL_DIR=C:\vcpkg\installed\x64-windows" >> $env:GITHUB_ENV
-              echo "OPENSSL_NO_VENDOR=1" >> $env:GITHUB_ENV
-            fi
-
+      - name: Install vcpkg & OpenSSL
+        if: runner.os == 'windows'
+        run: |
+          git clone https://github.com/Microsoft/vcpkg C:\vcpkg
+          C:\vcpkg\bootstrap-vcpkg.bat
+          C:\vcpkg\vcpkg.exe install openssl:x64-windows
       - name: Set env vars
         if: runner.os == 'windows'
         run: |
@@ -57,6 +47,17 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install cibuildwheel
 
+      # 5. （仅 Linux）安装 patchelf 以确保 manylinux 兼容性
+      - name: Install patchelf (Linux only)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y patchelf perl perl-modules build-essential pkg-config libssl-dev cpanminus
+          sudo cpanm --retry 5 IPC::Cmd ExtUtils::MakeMaker ExtUtils::Install File::Spec File::Path File::Basename Config || (
+          echo "Installing Config module from alternate source" &&
+          sudo apt-get install -y libconfig-inifiles-perl
+      )
+
       # 6. 使用 cibuildwheel 构建 abi3 wheel
       - name: Build abi3 wheel with cibuildwheel
         run: cibuildwheel --output-dir dist
@@ -69,7 +70,7 @@ jobs:
           CIBW_ARCHS_LINUX: "auto"
           # 避免 cibuildwheel 检查所有 Python 版本，这里只需 Python 3.9
           CIBW_ENVIRONMENT: "PYO3_STATIC_LIB=1"
-          CIBW_MANYLINUX_IMAGE: "manylinux2014"
+          CIBW_MANYLINUX_IMAGE: "manylinux_2_28"
 
       # 7. 上传 wheel 产物
       - name: Upload built wheels
