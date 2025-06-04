@@ -66,6 +66,8 @@ jobs:
       - name: Build wheel
         run: |
           python -m maturin build --release --interpreter python3.9 --target-dir dist
+          echo "Listing dist directory contents:"
+          ls -la dist/
 
       # 6. 上传 wheel 产物
       - name: Upload built wheels
@@ -78,6 +80,8 @@ jobs:
       - name: Build sdist
         run: |
           python -m build --sdist --outdir dist
+          echo "Listing dist directory contents after sdist:"
+          ls -la dist/
 
       - name: Upload sdist
         uses: actions/upload-artifact@v4
@@ -92,4 +96,11 @@ jobs:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
         run: |
-          python -m twine upload dist/*.whl dist/*.tar.gz
+          echo "Listing dist directory contents before upload:"
+          ls -la dist/
+          if [ -f dist/*.whl ] && [ -f dist/*.tar.gz ]; then
+            python -m twine upload dist/*.whl dist/*.tar.gz
+          else
+            echo "Error: Required distribution files not found"
+            exit 1
+          fi
