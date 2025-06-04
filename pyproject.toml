@@ -3,7 +3,7 @@ requires = ["maturin>=1.4,<2.0"]
 build-backend = "maturin"
 
 [project]
-name = "mac_validator"
+name = "bomiot_check"
 version = "0.1.0"
 description = "A Python package for MAC address validation and encryption"
 requires-python = ">=3.9"

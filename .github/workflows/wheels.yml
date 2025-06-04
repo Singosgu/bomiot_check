@@ -80,6 +80,10 @@ jobs:
             env | grep OPENSSL
           CIBW_BUILD_COMMAND: |
             echo "Starting build..."
+            cd /Users/runner/work/bomiot_check/bomiot_check
+            echo "Current directory: $(pwd)"
+            echo "Directory contents:"
+            ls -la
             maturin build --release --strip --manylinux off --out wheelhouse --verbose
             echo "Build completed with status: $?"
             ls -la wheelhouse/

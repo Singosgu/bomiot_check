@@ -1,10 +1,10 @@
 [package]
-name = "mac_validator"
+name = "bomiot_check"
 version = "0.1.0"
 edition = "2021"
 
 [lib]
-name = "mac_validator"
+name = "bomiot_check"
 crate-type = ["cdylib"]
 
 [dependencies]
