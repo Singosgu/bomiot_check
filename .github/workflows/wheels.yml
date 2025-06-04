@@ -73,6 +73,12 @@ jobs:
             
             # 在构建命令中加载环境变量
             echo "source /tmp/openssl_env.sh" >> /tmp/build_command.sh
+            
+            # 确保环境变量在构建过程中可用
+            export PKG_CONFIG_ALLOW_SYSTEM_CFLAGS=1
+            export PKG_CONFIG_ALLOW_SYSTEM_LIBS=1
+            export PKG_CONFIG_SYSROOT_DIR=/usr
+            export PKG_CONFIG_LIBDIR=/usr/lib64/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig
           CIBW_ENVIRONMENT_LINUX: |
             PKG_CONFIG_PATH=/usr/lib64/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig
             OPENSSL_DIR=/usr
