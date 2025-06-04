@@ -14,17 +14,23 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
-      - uses: actions/checkout@v4
-      - name: Install Perl and OpenSSL build dependencies (Linux only)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y perl build-essential pkg-config libssl-dev cpanminus
-          sudo cpanm IPC::Cmd
       # 1. 检出仓库代码
       - name: Checkout source
         uses: actions/checkout@v4
 
+      - name: Install vcpkg & OpenSSL
+        if: runner.os == 'windows'
+        run: |
+          git clone https://github.com/Microsoft/vcpkg C:\vcpkg
+          C:\vcpkg\bootstrap-vcpkg.bat
+          C:\vcpkg\vcpkg.exe install openssl:x64-windows
+      - name: Set env vars
+        if: runner.os == 'windows'
+        run: |
+          echo "VCPKG_ROOT=C:\vcpkg" >> $env:GITHUB_ENV
+          echo "OPENSSL_DIR=C:\vcpkg\installed\x64-windows" >> $env:GITHUB_ENV
+          echo "OPENSSL_NO_VENDOR=1" >> $env:GITHUB_ENV
+      
       # 2. 安装 Rust 工具链
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -46,7 +52,8 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y patchelf
+          sudo apt-get install -y patchelf perl perl-modules build-essential pkg-config libssl-dev cpanminus
+          sudo cpanm IPC::Cmd ExtUtils::MakeMaker ExtUtils::Install File::Spec File::Path File::Basename Config
 
       # 6. 使用 cibuildwheel 构建 abi3 wheel
       - name: Build abi3 wheel with cibuildwheel
@@ -60,6 +67,7 @@ jobs:
           CIBW_ARCHS_LINUX: "auto"
           # 避免 cibuildwheel 检查所有 Python 版本，这里只需 Python 3.9
           CIBW_ENVIRONMENT: "PYO3_STATIC_LIB=1"
+          CIBW_MANYLINUX_IMAGE: "manylinux_2_28"
 
       # 7. 上传 wheel 产物
       - name: Upload built wheels
