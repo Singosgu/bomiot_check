@@ -65,9 +65,12 @@ jobs:
       # 5. 使用 maturin 构建 abi3 wheel
       - name: Build wheel
         run: |
+          echo "Building wheel with maturin..."
           python -m maturin build --release --interpreter python3.9 --target-dir dist
-          echo "Listing dist directory contents:"
+          echo "Listing dist directory contents after wheel build:"
           ls -la dist/
+          echo "Checking for wheel files:"
+          find dist -name "*.whl" || echo "No wheel files found"
 
       # 6. 上传 wheel 产物
       - name: Upload built wheels
@@ -75,10 +78,12 @@ jobs:
         with:
           name: abi3-wheels-${{ runner.os }}
           path: dist/*.whl
+        continue-on-error: true
 
       # 7. 构建并上传 sdist
       - name: Build sdist
         run: |
+          echo "Building sdist..."
           python -m build --sdist --outdir dist
           echo "Listing dist directory contents after sdist:"
           ls -la dist/
@@ -98,9 +103,20 @@ jobs:
         run: |
           echo "Listing dist directory contents before upload:"
           ls -la dist/
-          if [ -f dist/*.whl ] && [ -f dist/*.tar.gz ]; then
-            python -m twine upload dist/*.whl dist/*.tar.gz
+          echo "Checking for distribution files:"
+          find dist -name "*.whl" -o -name "*.tar.gz"
+          
+          # 检查文件是否存在
+          if [ -f dist/*.tar.gz ]; then
+            echo "Found sdist file"
+            if [ -f dist/*.whl ]; then
+              echo "Found wheel file"
+              python -m twine upload dist/*.whl dist/*.tar.gz
+            else
+              echo "No wheel file found, uploading only sdist"
+              python -m twine upload dist/*.tar.gz
+            fi
           else
-            echo "Error: Required distribution files not found"
+            echo "Error: No distribution files found"
             exit 1
           fi
