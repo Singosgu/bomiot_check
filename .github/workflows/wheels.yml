@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:  # 允许手动触发
 
 jobs:
   build_wheels:
@@ -31,6 +32,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install cibuildwheel==2.16.2
 
+      - name: Show Python version
+        run: |
+          python --version
+          python -c "import sys; print(sys.executable)"
+
+      - name: Show Rust version
+        run: |
+          rustc --version
+          cargo --version
+
       - name: Build wheels
         env:
           CIBW_BEFORE_BUILD: >
@@ -38,9 +49,15 @@ jobs:
           CIBW_BUILD: "cp39-* cp310-* cp311-* cp312-*"
           CIBW_SKIP: "pp* *-musllinux* *-manylinux_i686*"
           CIBW_ARCHS: "x86_64"
-        run: python -m cibuildwheel --output-dir wheelhouse
+          CIBW_VERBOSE: 1  # 启用详细输出
+          CIBW_TEST_COMMAND: >
+            python -c "import mac_validator; print('Import successful')"
+        run: |
+          python -m cibuildwheel --output-dir wheelhouse
+          ls -la wheelhouse/
 
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
-          path: ./wheelhouse/*.whl 
+          path: ./wheelhouse/*.whl
+          if-no-files-found: error  # 如果没有找到文件则报错 

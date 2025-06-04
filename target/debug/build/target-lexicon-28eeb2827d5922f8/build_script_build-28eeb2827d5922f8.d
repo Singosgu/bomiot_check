@@ -1,0 +1,8 @@
+E:\gitee\test4\mac_validator\target\debug\build\target-lexicon-28eeb2827d5922f8\build_script_build-28eeb2827d5922f8.exe: C:\Users\Administrator\.cargo\registry\src\index.crates.io-6f17d22bba15001f\target-lexicon-0.12.16\build.rs C:\Users\Administrator\.cargo\registry\src\index.crates.io-6f17d22bba15001f\target-lexicon-0.12.16\src/data_model.rs C:\Users\Administrator\.cargo\registry\src\index.crates.io-6f17d22bba15001f\target-lexicon-0.12.16\src/triple.rs C:\Users\Administrator\.cargo\registry\src\index.crates.io-6f17d22bba15001f\target-lexicon-0.12.16\src/targets.rs
+
+E:\gitee\test4\mac_validator\target\debug\build\target-lexicon-28eeb2827d5922f8\build_script_build-28eeb2827d5922f8.d: C:\Users\Administrator\.cargo\registry\src\index.crates.io-6f17d22bba15001f\target-lexicon-0.12.16\build.rs C:\Users\Administrator\.cargo\registry\src\index.crates.io-6f17d22bba15001f\target-lexicon-0.12.16\src/data_model.rs C:\Users\Administrator\.cargo\registry\src\index.crates.io-6f17d22bba15001f\target-lexicon-0.12.16\src/triple.rs C:\Users\Administrator\.cargo\registry\src\index.crates.io-6f17d22bba15001f\target-lexicon-0.12.16\src/targets.rs
+
+C:\Users\Administrator\.cargo\registry\src\index.crates.io-6f17d22bba15001f\target-lexicon-0.12.16\build.rs:
+C:\Users\Administrator\.cargo\registry\src\index.crates.io-6f17d22bba15001f\target-lexicon-0.12.16\src/data_model.rs:
+C:\Users\Administrator\.cargo\registry\src\index.crates.io-6f17d22bba15001f\target-lexicon-0.12.16\src/triple.rs:
+C:\Users\Administrator\.cargo\registry\src\index.crates.io-6f17d22bba15001f\target-lexicon-0.12.16\src/targets.rs:
