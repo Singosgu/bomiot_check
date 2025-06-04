@@ -18,6 +18,24 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
+      - name: Build wheels with cibuildwheel
+        env:
+          # 只允许 64 位 CPython，跳过 PyPy 和 32 位
+          CIBW_SKIP: "pp* *i686 *i386"
+          # 在 manylinux 容器中安装 openssl-devel
+          CIBW_BEFORE_ALL_LINUX: "yum install -y openssl-devel pkgconfig"
+          # 正确传递 PKG_CONFIG_PATH 给容器内的构建环境
+          CIBW_ENVIRONMENT: "PKG_CONFIG_PATH=/usr/lib64/pkgconfig"
+          # 可选：调试，确认容器内有 openssl.pc 并能被 pkg-config 找到
+          CIBW_BEFORE_BUILD: |
+            echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
+            ls /usr/lib64/pkgconfig/openssl.pc
+            pkg-config --cflags --libs openssl
+        run: |
+          pip install cibuildwheel
+          cibuildwheel --output-dir wheelhouse
+
+
       - name: Install vcpkg & OpenSSL
         if: runner.os == 'windows'
         run: |
@@ -56,21 +74,6 @@ jobs:
           sudo apt-get install -y pkg-config libssl-dev
           ls -l /usr/lib/x86_64-linux-gnu/pkgconfig/openssl.pc
           PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig pkg-config --cflags --libs openssl
-
-      - name: Build wheels
-        if: runner.os == 'linux'
-        env:
-          CIBW_SKIP: "*i686 *i386 PP*"
-          CIBW_BUILD: "cp3*-manylinux_x86_64*"
-          CIBW_BEFORE_ALL_LINUX: yum install -y openssl-devel pkgconfig
-          CIBW_ENVIRONMENT: PKG_CONFIG_PATH=/usr/lib64/pkgconfig
-          CIBW_BEFORE_BUILD: |
-            echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
-            ls /usr/lib64/pkgconfig/openssl.pc
-            pkg-config --cflags --libs openssl
-        run: |
-          pip install cibuildwheel
-          cibuildwheel --output-dir wheelhouse
 
       # 6. 使用 cibuildwheel 构建 abi3 wheel
       - name: Build abi3 wheel with cibuildwheel
