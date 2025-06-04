@@ -28,7 +28,11 @@ jobs:
             (command -v yum && yum install -y openssl-devel pkgconfig) || \
             (command -v apt-get && apt-get update && apt-get install -y libssl-dev pkg-config)
           # 让 pkg-config 能正确找到 openssl.pc
-          CIBW_ENVIRONMENT: PKG_CONFIG_PATH=/usr/lib64/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig
+          CIBW_ENVIRONMENT: |
+            PKG_CONFIG_PATH=/usr/lib64/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig
+            OPENSSL_DIR=/usr
+            OPENSSL_INCLUDE_DIR=/usr/include
+            OPENSSL_LIB_DIR=/usr/lib/x86_64-linux-gnu
           # 检查调试输出
           CIBW_BEFORE_BUILD: |
             echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
