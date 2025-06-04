@@ -35,30 +35,36 @@ jobs:
             OPENSSL_LIB_DIR=/usr/lib64:/usr/lib/x86_64-linux-gnu
             OPENSSL_NO_VENDOR=1
           # 检查调试输出
-          CIBW_BEFORE_BUILD: |
-            echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
+          CIBW_BEFORE_BUILD_LINUX: |
+            # 安装必要的包
+            yum install -y openssl-devel pkgconfig || \
+            (apt-get update && apt-get install -y libssl-dev pkg-config)
+            
+            # 设置环境变量
+            export PKG_CONFIG_PATH=/usr/lib64/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig
+            export OPENSSL_DIR=/usr
+            export OPENSSL_INCLUDE_DIR=/usr/include
+            export OPENSSL_LIB_DIR=/usr/lib64:/usr/lib/x86_64-linux-gnu
+            export OPENSSL_NO_VENDOR=1
+            
+            # 验证安装
+            echo "Checking OpenSSL installation..."
             ls -la /usr/lib64/pkgconfig/openssl.pc || ls -la /usr/lib/x86_64-linux-gnu/pkgconfig/openssl.pc || true
             pkg-config --cflags --libs openssl || true
             echo "OpenSSL environment variables:"
             env | grep OPENSSL
             echo "Library paths:"
             ls -la /usr/lib64/libssl* || ls -la /usr/lib/x86_64-linux-gnu/libssl* || true
-          # 设置构建环境
-          CIBW_ENVIRONMENT_LINUX: |
-            PKG_CONFIG_PATH=/usr/lib64/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig
-            OPENSSL_DIR=/usr
-            OPENSSL_INCLUDE_DIR=/usr/include
-            OPENSSL_LIB_DIR=/usr/lib64:/usr/lib/x86_64-linux-gnu
-            OPENSSL_NO_VENDOR=1
-          # 设置构建命令
-          CIBW_BUILD_COMMAND: |
-            echo "Starting build..."
-            echo "Current directory: $(pwd)"
-            echo "Directory contents:"
-            ls -la
-            maturin build --release --strip --manylinux off --out wheelhouse --verbose
-            echo "Build completed with status: $?"
-            ls -la wheelhouse/
+            
+            # 确保 pkg-config 能找到 OpenSSL
+            if [ -f /usr/lib64/pkgconfig/openssl.pc ]; then
+              echo "Found openssl.pc in /usr/lib64/pkgconfig"
+            elif [ -f /usr/lib/x86_64-linux-gnu/pkgconfig/openssl.pc ]; then
+              echo "Found openssl.pc in /usr/lib/x86_64-linux-gnu/pkgconfig"
+            else
+              echo "openssl.pc not found in standard locations"
+              find /usr -name "openssl.pc" || true
+            fi
         run: |
           pip install cibuildwheel
           cibuildwheel --output-dir wheelhouse
