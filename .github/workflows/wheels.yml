@@ -28,13 +28,6 @@ jobs:
             yum install -y openssl-devel pkgconfig || \
             (apt-get update && apt-get install -y libssl-dev pkg-config)
           # 让 pkg-config 能正确找到 openssl.pc
-          CIBW_ENVIRONMENT: |
-            PKG_CONFIG_PATH=/usr/lib64/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig
-            OPENSSL_DIR=/usr
-            OPENSSL_INCLUDE_DIR=/usr/include
-            OPENSSL_LIB_DIR=/usr/lib64:/usr/lib/x86_64-linux-gnu
-            OPENSSL_NO_VENDOR=1
-          # 检查调试输出
           CIBW_BEFORE_BUILD_LINUX: |
             # 安装必要的包
             yum install -y openssl-devel pkgconfig || \
@@ -65,6 +58,14 @@ jobs:
               echo "openssl.pc not found in standard locations"
               find /usr -name "openssl.pc" || true
             fi
+          CIBW_ENVIRONMENT_LINUX: |
+            PKG_CONFIG_PATH=/usr/lib64/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig
+            OPENSSL_DIR=/usr
+            OPENSSL_INCLUDE_DIR=/usr/include
+            OPENSSL_LIB_DIR=/usr/lib64:/usr/lib/x86_64-linux-gnu
+            OPENSSL_NO_VENDOR=1
+            PYO3_STATIC_LIB=1
+          CIBW_MANYLINUX_IMAGE: "manylinux_2_28"
         run: |
           pip install cibuildwheel
           cibuildwheel --output-dir wheelhouse
