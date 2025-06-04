@@ -21,15 +21,15 @@ jobs:
       - name: Build wheels with cibuildwheel
         if: runner.os == 'linux'
         env:
-          # 跳过 PyPy、32位、musllinux
+          # 跳过 musllinux（极简、无包管理器）、PyPy、32位
           CIBW_SKIP: "*musllinux* pp* *i686 *i386"
-          # 兼容 yum/apt-get
+          # 在容器内自动装 openssl-devel 或 libssl-dev 和 pkg-config
           CIBW_BEFORE_ALL_LINUX: |
             (command -v yum && yum install -y openssl-devel pkgconfig) || \
             (command -v apt-get && apt-get update && apt-get install -y libssl-dev pkg-config)
-          # 两种路径都加，保证能找到 openssl.pc
+          # 让 pkg-config 能正确找到 openssl.pc
           CIBW_ENVIRONMENT: PKG_CONFIG_PATH=/usr/lib64/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig
-          # 检查 openssl.pc 和 pkg-config，调试用
+          # 检查调试输出
           CIBW_BEFORE_BUILD: |
             echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
             ls /usr/lib64/pkgconfig/openssl.pc || ls /usr/lib/x86_64-linux-gnu/pkgconfig/openssl.pc || true
