@@ -58,6 +58,13 @@ jobs:
               echo "openssl.pc not found in standard locations"
               find /usr -name "openssl.pc" || true
             fi
+            
+            # 确保环境变量在构建过程中可用
+            echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH" >> $GITHUB_ENV
+            echo "OPENSSL_DIR=$OPENSSL_DIR" >> $GITHUB_ENV
+            echo "OPENSSL_INCLUDE_DIR=$OPENSSL_INCLUDE_DIR" >> $GITHUB_ENV
+            echo "OPENSSL_LIB_DIR=$OPENSSL_LIB_DIR" >> $GITHUB_ENV
+            echo "OPENSSL_NO_VENDOR=$OPENSSL_NO_VENDOR" >> $GITHUB_ENV
           CIBW_ENVIRONMENT_LINUX: |
             PKG_CONFIG_PATH=/usr/lib64/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig
             OPENSSL_DIR=/usr
