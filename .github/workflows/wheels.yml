@@ -53,8 +53,8 @@ jobs:
         if: runner.os == 'linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libssl-dev
-          echo "OPENSSL_DIR=/usr/lib/ssl" >> $GITHUB_ENV
+          sudo apt-get install -y pkg-config libssl-dev
+          echo "PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig" >> $GITHUB_ENV
 
       # 6. 使用 cibuildwheel 构建 abi3 wheel
       - name: Build abi3 wheel with cibuildwheel
