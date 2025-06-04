@@ -60,6 +60,7 @@ jobs:
       - name: Build wheels
         if: runner.os == 'linux'
         env:
+          CIBW_SKIP: "pp*"
           CIBW_BEFORE_ALL_LINUX: yum install -y openssl-devel pkgconfig
           CIBW_ENVIRONMENT: PKG_CONFIG_PATH=/usr/lib64/pkgconfig
           CIBW_BEFORE_BUILD: |
