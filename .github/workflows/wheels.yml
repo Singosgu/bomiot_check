@@ -53,7 +53,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y patchelf perl perl-modules build-essential pkg-config libssl-dev cpanminus
-          sudo cpanm IPC::Cmd ExtUtils::MakeMaker ExtUtils::Install File::Spec File::Path File::Basename Config
+          sudo cpanm --retry 5 IPC::Cmd ExtUtils::MakeMaker ExtUtils::Install File::Spec File::Path File::Basename Config || (
+              echo "Installing Config module from alternate source" &&
+              sudo apt-get install -y libconfig-inifiles-perl
+          )
 
       # 6. 使用 cibuildwheel 构建 abi3 wheel
       - name: Build abi3 wheel with cibuildwheel
