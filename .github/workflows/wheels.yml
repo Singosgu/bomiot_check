@@ -73,8 +73,8 @@ jobs:
             export OPENSSL_DIR=/usr/local/opt/openssl@3
             export OPENSSL_INCLUDE_DIR=/usr/local/opt/openssl@3/include
             export OPENSSL_LIB_DIR=/usr/local/opt/openssl@3/lib
-          CIBW_BUILD_COMMAND_MACOS: |
-            maturin build --release --strip --manylinux off
+          CIBW_BUILD_COMMAND: |
+            maturin build --release --strip --manylinux off --out wheelhouse
         run: |
           python -m cibuildwheel --output-dir wheelhouse
           if [ "${{ matrix.os }}" == "windows-latest" ]; then
