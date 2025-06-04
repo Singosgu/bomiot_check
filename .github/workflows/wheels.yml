@@ -83,8 +83,8 @@ jobs:
             maturin build --release --strip --manylinux off --out wheelhouse --verbose
             echo "Build completed with status: $?"
             ls -la wheelhouse/
-          CIBW_BUILD_FRONTEND: "maturin"
-          CIBW_BUILD_FRONTEND_ARGS: "--release --strip --manylinux off"
+          CIBW_BUILD_FRONTEND: "pip"
+          CIBW_BUILD_FRONTEND_ARGS: "--no-deps"
         run: |
           python -m cibuildwheel --output-dir wheelhouse
           if [ "${{ matrix.os }}" == "windows-latest" ]; then
