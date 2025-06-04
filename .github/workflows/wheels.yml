@@ -33,6 +33,7 @@ jobs:
             OPENSSL_DIR=/usr
             OPENSSL_INCLUDE_DIR=/usr/include
             OPENSSL_LIB_DIR=/usr/lib64:/usr/lib/x86_64-linux-gnu
+            OPENSSL_NO_VENDOR=1
           # 检查调试输出
           CIBW_BEFORE_BUILD: |
             echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
@@ -42,6 +43,22 @@ jobs:
             env | grep OPENSSL
             echo "Library paths:"
             ls -la /usr/lib64/libssl* || ls -la /usr/lib/x86_64-linux-gnu/libssl* || true
+          # 设置构建环境
+          CIBW_ENVIRONMENT_LINUX: |
+            PKG_CONFIG_PATH=/usr/lib64/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig
+            OPENSSL_DIR=/usr
+            OPENSSL_INCLUDE_DIR=/usr/include
+            OPENSSL_LIB_DIR=/usr/lib64:/usr/lib/x86_64-linux-gnu
+            OPENSSL_NO_VENDOR=1
+          # 设置构建命令
+          CIBW_BUILD_COMMAND: |
+            echo "Starting build..."
+            echo "Current directory: $(pwd)"
+            echo "Directory contents:"
+            ls -la
+            maturin build --release --strip --manylinux off --out wheelhouse --verbose
+            echo "Build completed with status: $?"
+            ls -la wheelhouse/
         run: |
           pip install cibuildwheel
           cibuildwheel --output-dir wheelhouse
