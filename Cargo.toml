@@ -14,4 +14,4 @@ chrono = "0.4"
 aes-gcm = "0.10"
 base64 = "0.21"
 rand = "0.8"
-openssl = { version = "0.10", features = ["vendored"] }
+openssl = "0.10"] }
