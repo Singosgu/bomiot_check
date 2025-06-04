@@ -106,15 +106,19 @@ jobs:
           echo "Checking for distribution files:"
           find dist -name "*.whl" -o -name "*.tar.gz"
           
-          # 检查文件是否存在
+          # 获取版本号
+          VERSION=$(echo ${{ github.ref }} | sed 's/refs\/tags\/v//')
+          echo "Current version: $VERSION"
+          
+          # 检查文件是否存在并上传
           if [ -f dist/*.tar.gz ]; then
             echo "Found sdist file"
             if [ -f dist/*.whl ]; then
               echo "Found wheel file"
-              python -m twine upload dist/*.whl dist/*.tar.gz
+              python -m twine upload --skip-existing dist/*.whl dist/*.tar.gz
             else
               echo "No wheel file found, uploading only sdist"
-              python -m twine upload dist/*.tar.gz
+              python -m twine upload --skip-existing dist/*.tar.gz
             fi
           else
             echo "Error: No distribution files found"
