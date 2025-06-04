@@ -49,13 +49,20 @@ jobs:
           python -m pip install cibuildwheel
 
       # 5. （仅 Linux）安装 patchelf 以确保 manylinux 兼容性
-      - name: Install OpenSSL
+      - name: Install OpenSSL build dependencies
         if: runner.os == 'linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y pkg-config libssl-dev
-          export PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig
-          ls -l /usr/lib/x86_64-linux-gnu/pkgconfig/openssl.pc
+      
+      - name: Export correct PKG_CONFIG_PATH
+        if: runner.os == 'linux'
+        run: |
+          echo "PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
+      
+      - name: Check openssl.pc
+        if: runner.os == 'linux'
+        run: ls -l /usr/lib/x86_64-linux-gnu/pkgconfig/openssl.pc
 
       # 6. 使用 cibuildwheel 构建 abi3 wheel
       - name: Build abi3 wheel with cibuildwheel
