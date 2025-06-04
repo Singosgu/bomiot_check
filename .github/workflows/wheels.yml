@@ -18,92 +18,17 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Build wheels with cibuildwheel
+      - name: Install OpenSSL and dependencies
         if: runner.os == 'linux'
-        env:
-          # 跳过 musllinux（极简、无包管理器）、PyPy、32位
-          CIBW_SKIP: "*musllinux* pp* *i686 *i386"
-          # 在容器内自动装 openssl-devel 或 libssl-dev 和 pkg-config
-          CIBW_BEFORE_ALL_LINUX: |
-            yum install -y openssl-devel pkgconfig || \
-            (apt-get update && apt-get install -y libssl-dev pkg-config)
-          # 让 pkg-config 能正确找到 openssl.pc
-          CIBW_BEFORE_BUILD_LINUX: |
-            # 安装必要的包
-            yum install -y openssl-devel pkgconfig || \
-            (apt-get update && apt-get install -y libssl-dev pkg-config)
-            
-            # 设置环境变量
-            export PKG_CONFIG_PATH=/usr/lib64/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig
-            export OPENSSL_DIR=/usr
-            export OPENSSL_INCLUDE_DIR=/usr/include
-            export OPENSSL_LIB_DIR=/usr/lib64:/usr/lib/x86_64-linux-gnu
-            export OPENSSL_NO_VENDOR=1
-            
-            # 验证安装
-            echo "Checking OpenSSL installation..."
-            ls -la /usr/lib64/pkgconfig/openssl.pc || ls -la /usr/lib/x86_64-linux-gnu/pkgconfig/openssl.pc || true
-            pkg-config --cflags --libs openssl || true
-            echo "OpenSSL environment variables:"
-            env | grep OPENSSL
-            echo "Library paths:"
-            ls -la /usr/lib64/libssl* || ls -la /usr/lib/x86_64-linux-gnu/libssl* || true
-            
-            # 确保 pkg-config 能找到 OpenSSL
-            if [ -f /usr/lib64/pkgconfig/openssl.pc ]; then
-              echo "Found openssl.pc in /usr/lib64/pkgconfig"
-            elif [ -f /usr/lib/x86_64-linux-gnu/pkgconfig/openssl.pc ]; then
-              echo "Found openssl.pc in /usr/lib/x86_64-linux-gnu/pkgconfig"
-            else
-              echo "openssl.pc not found in standard locations"
-              find /usr -name "openssl.pc" || true
-            fi
-            
-            # 创建环境变量文件
-            cat > /tmp/openssl_env.sh << 'EOF'
-            export PKG_CONFIG_PATH=/usr/lib64/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig
-            export OPENSSL_DIR=/usr
-            export OPENSSL_INCLUDE_DIR=/usr/include
-            export OPENSSL_LIB_DIR=/usr/lib64:/usr/lib/x86_64-linux-gnu
-            export OPENSSL_NO_VENDOR=1
-            EOF
-            
-            # 使环境变量文件可执行
-            chmod +x /tmp/openssl_env.sh
-            
-            # 在构建命令中加载环境变量
-            echo "source /tmp/openssl_env.sh" >> /tmp/build_command.sh
-            
-            # 确保环境变量在构建过程中可用
-            export PKG_CONFIG_ALLOW_SYSTEM_CFLAGS=1
-            export PKG_CONFIG_ALLOW_SYSTEM_LIBS=1
-            export PKG_CONFIG_SYSROOT_DIR=/usr
-            export PKG_CONFIG_LIBDIR=/usr/lib64/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig
-            
-            # 确保环境变量在构建过程中可用
-            echo "PKG_CONFIG_ALLOW_SYSTEM_CFLAGS=1" >> /tmp/openssl_env.sh
-            echo "PKG_CONFIG_ALLOW_SYSTEM_LIBS=1" >> /tmp/openssl_env.sh
-            echo "PKG_CONFIG_SYSROOT_DIR=/usr" >> /tmp/openssl_env.sh
-            echo "PKG_CONFIG_LIBDIR=/usr/lib64/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig" >> /tmp/openssl_env.sh
-            
-            # 确保环境变量在构建过程中可用
-            echo "PKG_CONFIG_PATH=/usr/lib64/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig" >> /tmp/openssl_env.sh
-            echo "OPENSSL_DIR=/usr" >> /tmp/openssl_env.sh
-            echo "OPENSSL_INCLUDE_DIR=/usr/include" >> /tmp/openssl_env.sh
-            echo "OPENSSL_LIB_DIR=/usr/lib64:/usr/lib/x86_64-linux-gnu" >> /tmp/openssl_env.sh
-            echo "OPENSSL_NO_VENDOR=1" >> /tmp/openssl_env.sh
-          CIBW_ENVIRONMENT_LINUX: |
-            PKG_CONFIG_PATH=/usr/lib64/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig
-            OPENSSL_DIR=/usr
-            OPENSSL_INCLUDE_DIR=/usr/include
-            OPENSSL_LIB_DIR=/usr/lib64:/usr/lib/x86_64-linux-gnu
-            OPENSSL_NO_VENDOR=1
-            PYO3_STATIC_LIB=1
-          CIBW_MANYLINUX_IMAGE: "manylinux_2_28"
         run: |
-          pip install cibuildwheel
-          cibuildwheel --output-dir wheelhouse
-
+          sudo apt-get update
+          sudo apt-get install -y pkg-config libssl-dev
+          echo "PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig" >> $GITHUB_ENV
+          echo "OPENSSL_DIR=/usr" >> $GITHUB_ENV
+          echo "OPENSSL_INCLUDE_DIR=/usr/include" >> $GITHUB_ENV
+          echo "OPENSSL_LIB_DIR=/usr/lib/x86_64-linux-gnu" >> $GITHUB_ENV
+          echo "OPENSSL_NO_VENDOR=1" >> $GITHUB_ENV
+          echo "PYO3_STATIC_LIB=1" >> $GITHUB_ENV
 
       - name: Install vcpkg & OpenSSL
         if: runner.os == 'windows'
@@ -129,46 +54,27 @@ jobs:
         with:
           python-version: "3.9"
 
-      # 4. 升级 pip 并安装 cibuildwheel
-      - name: Upgrade pip and install cibuildwheel
+      # 4. 升级 pip 并安装 build dependencies
+      - name: Upgrade pip and install build dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install cibuildwheel
+          python -m pip install maturin build
 
-      # 5. （仅 Linux）安装 patchelf 以确保 manylinux 兼容性
-      - name: Install OpenSSL build dependencies
-        if: runner.os == 'linux'
+      # 5. 使用 maturin 构建 abi3 wheel
+      - name: Build wheel
         run: |
-          sudo apt-get update
-          sudo apt-get install -y pkg-config libssl-dev
-          ls -l /usr/lib/x86_64-linux-gnu/pkgconfig/openssl.pc
-          PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig pkg-config --cflags --libs openssl
+          python -m maturin build --release --interpreter python3.9 --target-dir dist
 
-      # 6. 使用 cibuildwheel 构建 abi3 wheel
-      - name: Build abi3 wheel with cibuildwheel
-        run: cibuildwheel --output-dir dist
-        env:
-          # 只构建 cp39-*，因 abi3 只需一次，wheel 可供 3.9+ 使用
-          CIBW_BUILD: "cp39-*"
-          # 跳过 PyPy 和 musllinux（如需 musllinux, 可移除此项）
-          CIBW_SKIP: "pp* *-musllinux*"
-          # Linux 架构（可根据需求扩展，如 aarch64）
-          CIBW_ARCHS_LINUX: "auto"
-          # 避免 cibuildwheel 检查所有 Python 版本，这里只需 Python 3.9
-          CIBW_ENVIRONMENT: "PYO3_STATIC_LIB=1"
-          CIBW_MANYLINUX_IMAGE: "manylinux_2_28"
-
-      # 7. 上传 wheel 产物
+      # 6. 上传 wheel 产物
       - name: Upload built wheels
         uses: actions/upload-artifact@v4
         with:
           name: abi3-wheels-${{ runner.os }}
           path: dist/*.whl
 
-      # 8. 可选：构建并上传 sdist
+      # 7. 可选：构建并上传 sdist
       - name: Build sdist
         run: |
-          pip install build
           python -m build --sdist --outdir dist
 
       - name: Upload sdist
