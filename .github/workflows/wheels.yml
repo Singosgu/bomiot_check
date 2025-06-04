@@ -21,13 +21,15 @@ jobs:
       - name: Build wheels with cibuildwheel
         if: runner.os == 'linux'
         env:
+          CIBW_BEFORE_ALL_LINUX: |
+            (command -v yum && yum install -y openssl-devel pkgconfig) || \
+            (command -v apt-get && apt-get update && apt-get install -y libssl-dev pkg-config)
+          CIBW_ENVIRONMENT: PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/lib64/pkgconfig
           CIBW_SKIP: "pp* *i686 *i386"
-          CIBW_BEFORE_ALL_LINUX: "yum install -y openssl-devel pkgconfig"
-          CIBW_ENVIRONMENT: "PKG_CONFIG_PATH=/usr/lib64/pkgconfig"
           CIBW_BEFORE_BUILD: |
             echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
-            ls /usr/lib64/pkgconfig/openssl.pc
-            pkg-config --cflags --libs openssl
+            ls /usr/lib64/pkgconfig/openssl.pc || ls /usr/lib/x86_64-linux-gnu/pkgconfig/openssl.pc || true
+            pkg-config --cflags --libs openssl || true
         run: |
           pip install cibuildwheel
           cibuildwheel --output-dir wheelhouse
