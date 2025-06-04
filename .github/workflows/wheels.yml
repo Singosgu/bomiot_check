@@ -64,7 +64,7 @@ jobs:
           CIBW_ARCHS_MACOS: "x86_64"
           CIBW_VERBOSE: 2  # 增加详细输出级别
           CIBW_TEST_COMMAND: >
-            python -c "import mac_validator; print('Import successful')"
+            python -c "import bomiot_check; print('Import successful')"
           # macOS specific environment variables
           CIBW_ENVIRONMENT_MACOS: >
             OPENSSL_DIR=/usr/local/opt/openssl@3

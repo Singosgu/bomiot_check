@@ -21,7 +21,7 @@ classifiers = [
 
 [tool.maturin]
 python-source = "."
-module-name = "mac_validator"
+module-name = "bomiot_check"
 features = ["pyo3/extension-module"]
 targets = ["x86_64-unknown-linux-gnu", "x86_64-pc-windows-msvc", "x86_64-apple-darwin"]
 strip = true
