@@ -3,6 +3,8 @@ name: Build universal abi3 wheels for Python 3.9+ on Windows, macOS, Linux
 on:
   push:
     branches: [main, master]
+    tags:
+      - 'v*'  # 当推送以 v 开头的标签时触发发布
   pull_request:
 
 jobs:
@@ -58,7 +60,7 @@ jobs:
       - name: Upgrade pip and install build dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install maturin build
+          python -m pip install maturin build twine
 
       # 5. 使用 maturin 构建 abi3 wheel
       - name: Build wheel
@@ -72,7 +74,7 @@ jobs:
           name: abi3-wheels-${{ runner.os }}
           path: dist/*.whl
 
-      # 7. 可选：构建并上传 sdist
+      # 7. 构建并上传 sdist
       - name: Build sdist
         run: |
           python -m build --sdist --outdir dist
@@ -82,3 +84,12 @@ jobs:
         with:
           name: sdist-${{ runner.os }}
           path: dist/*.tar.gz
+
+      # 8. 发布到 PyPI
+      - name: Publish to PyPI
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          python -m twine upload dist/*
