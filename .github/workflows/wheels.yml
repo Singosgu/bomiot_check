@@ -5,16 +5,13 @@ on:
     branches: [main, master]
   pull_request:
 
-env:
-  OPENSSL_DIR: /usr/lib/ssl
-
 jobs:
   build_abi3_wheels:
     name: Build abi3 wheel on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [windows-latest, macos-latest]
 
     steps:
       # 1. 检出仓库代码
@@ -60,10 +57,7 @@ jobs:
               echo "Installing Config module from alternate source" &&
               sudo apt-get install -y libconfig-inifiles-perl
           )
-      - name: Verify OpenSSL installation
-        run: |
-          ls $OPENSSL_DIR
-          
+
       # 6. 使用 cibuildwheel 构建 abi3 wheel
       - name: Build abi3 wheel with cibuildwheel
         run: cibuildwheel --output-dir dist
