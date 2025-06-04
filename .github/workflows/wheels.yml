@@ -56,12 +56,17 @@ jobs:
           sudo apt-get install -y pkg-config libssl-dev
           ls -l /usr/lib/x86_64-linux-gnu/pkgconfig/openssl.pc
           PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig pkg-config --cflags --libs openssl
-          
-      - name: Build wheels with cibuildwheel
+
+      - name: Build wheels
+        if: runner.os == 'linux'
         env:
-          CIBW_ENVIRONMENT: PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig
-          # 可选：在容器里确认
-          CIBW_BEFORE_BUILD: 'echo "cibw before: $PKG_CONFIG_PATH"; pkg-config --cflags --libs openssl'
+          CIBW_BEFORE_ALL_LINUX: >
+            yum install -y openssl-devel pkgconfig || apt-get update && apt-get install -y libssl-dev pkg-config
+          CIBW_ENVIRONMENT: PKG_CONFIG_PATH=/usr/lib64/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig
+          CIBW_BEFORE_BUILD: >
+            echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH";
+            ls /usr/lib64/pkgconfig/openssl.pc || ls /usr/lib/x86_64-linux-gnu/pkgconfig/openssl.pc || true;
+            pkg-config --cflags --libs openssl || true
         run: |
           pip install cibuildwheel
           cibuildwheel --output-dir wheelhouse
