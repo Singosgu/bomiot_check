@@ -58,11 +58,12 @@ jobs:
       - name: Export correct PKG_CONFIG_PATH
         if: runner.os == 'linux'
         run: |
-          echo "PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
+          echo "PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig" >> $GITHUB_ENV
       
       - name: Check openssl.pc
         if: runner.os == 'linux'
-        run: ls -l /usr/lib/x86_64-linux-gnu/pkgconfig/openssl.pc
+        run: 
+          ls -l /usr/lib/x86_64-linux-gnu/pkgconfig/openssl.pc
 
       # 6. 使用 cibuildwheel 构建 abi3 wheel
       - name: Build abi3 wheel with cibuildwheel
