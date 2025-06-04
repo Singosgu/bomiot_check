@@ -85,6 +85,13 @@ jobs:
             echo "PKG_CONFIG_ALLOW_SYSTEM_LIBS=1" >> /tmp/openssl_env.sh
             echo "PKG_CONFIG_SYSROOT_DIR=/usr" >> /tmp/openssl_env.sh
             echo "PKG_CONFIG_LIBDIR=/usr/lib64/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig" >> /tmp/openssl_env.sh
+            
+            # 确保环境变量在构建过程中可用
+            echo "PKG_CONFIG_PATH=/usr/lib64/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig" >> /tmp/openssl_env.sh
+            echo "OPENSSL_DIR=/usr" >> /tmp/openssl_env.sh
+            echo "OPENSSL_INCLUDE_DIR=/usr/include" >> /tmp/openssl_env.sh
+            echo "OPENSSL_LIB_DIR=/usr/lib64:/usr/lib/x86_64-linux-gnu" >> /tmp/openssl_env.sh
+            echo "OPENSSL_NO_VENDOR=1" >> /tmp/openssl_env.sh
           CIBW_ENVIRONMENT_LINUX: |
             PKG_CONFIG_PATH=/usr/lib64/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig
             OPENSSL_DIR=/usr
