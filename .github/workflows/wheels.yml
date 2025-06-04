@@ -62,7 +62,7 @@ jobs:
           CIBW_ARCHS_LINUX: "x86_64"
           CIBW_ARCHS_WINDOWS: "AMD64"
           CIBW_ARCHS_MACOS: "x86_64"
-          CIBW_VERBOSE: 2  # 增加详细输出级别
+          CIBW_VERBOSE: 2
           CIBW_TEST_COMMAND: >
             python -c "import bomiot_check; print('Import successful')"
           # macOS specific environment variables
@@ -80,7 +80,6 @@ jobs:
             env | grep OPENSSL
           CIBW_BUILD_COMMAND: |
             echo "Starting build..."
-            cd /Users/runner/work/bomiot_check/bomiot_check
             echo "Current directory: $(pwd)"
             echo "Directory contents:"
             ls -la
@@ -89,6 +88,7 @@ jobs:
             ls -la wheelhouse/
           CIBW_BUILD_FRONTEND: "pip"
           CIBW_BUILD_FRONTEND_ARGS: "--no-deps"
+          CIBW_BUILD_VERBOSITY: 3
         run: |
           python -m cibuildwheel --output-dir wheelhouse
           if [ "${{ matrix.os }}" == "windows-latest" ]; then
@@ -102,4 +102,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: ./wheelhouse/*.whl
-          if-no-files-found: error  # 如果没有找到文件则报错 
+          if-no-files-found: error 
