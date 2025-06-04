@@ -56,7 +56,9 @@ jobs:
             pip install maturin
           CIBW_BUILD: "cp39-* cp310-* cp311-* cp312-*"
           CIBW_SKIP: "pp* *-musllinux* *-manylinux_i686*"
-          CIBW_ARCHS: "x86_64"
+          CIBW_ARCHS_LINUX: "x86_64"
+          CIBW_ARCHS_WINDOWS: "AMD64"
+          CIBW_ARCHS_MACOS: "x86_64"
           CIBW_VERBOSE: 1  # 启用详细输出
           CIBW_TEST_COMMAND: >
             python -c "import mac_validator; print('Import successful')"
@@ -67,7 +69,11 @@ jobs:
             OPENSSL_LIB_DIR=/usr/local/opt/openssl@3/lib
         run: |
           python -m cibuildwheel --output-dir wheelhouse
-          ls -la wheelhouse/
+          if [ "${{ matrix.os }}" == "windows-latest" ]; then
+            dir wheelhouse
+          else
+            ls -la wheelhouse/
+          fi
 
       - name: Upload wheels
         uses: actions/upload-artifact@v4
