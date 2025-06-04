@@ -18,7 +18,9 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y perl build-essential pkg-config libssl-dev libipc-cmd-perl
+          sudo apt-get install -y perl build-essential pkg-config libssl-dev
+          sudo apt-get install -y cpanminus
+          sudo cpanm IPC::Cmd
       # 1. 检出仓库代码
       - name: Checkout source
         uses: actions/checkout@v4
