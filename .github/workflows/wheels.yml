@@ -46,6 +46,8 @@ jobs:
           echo "OPENSSL_DIR=C:\vcpkg\installed\x64-windows" >> $env:GITHUB_ENV
           echo "OPENSSL_NO_VENDOR=1" >> $env:GITHUB_ENV
       
+
+
       # 2. 安装 Rust 工具链
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -56,6 +58,9 @@ jobs:
         with:
           python-version: "3.9"
 
+      - name: 查看 Python 版本
+        run: python --version
+      
       # 4. 升级 pip 并安装 build dependencies
       - name: Upgrade pip and install build dependencies
         run: |
@@ -66,12 +71,12 @@ jobs:
       - name: Build wheel
         run: |
           echo "Building wheel with maturin..."
-          python -m maturin build --release --interpreter python3.9 --target-dir dist
+          python -m maturin build --release --interpreter python3 --target-dir dist
           echo "Listing dist directory contents after wheel build:"
           ls -la dist/
           echo "Checking for wheel files:"
           find dist -name "*.whl" || echo "No wheel files found"
-          echo '::find dist -name "*.whl"'
+          echo find dist -name "*.whl"
 
       # 6. 上传 wheel 产物
       # - name: Upload built wheels

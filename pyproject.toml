@@ -20,7 +20,5 @@ classifiers = [
 ]
 
 [tool.maturin]
-python-source = "."
 module-name = "bomiot_check"
 features = ["pyo3/extension-module"]
-strip = true
