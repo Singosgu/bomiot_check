@@ -173,7 +173,7 @@ jobs:
   merge:
     name: Building Single Artifact
     runs-on: ubuntu-latest
-    needs: [macos, windows, linux, linux-cross]
+    needs: [macos, windows]
     steps:
       - name: Downloading all Artifacts
         uses: actions/download-artifact@v4
