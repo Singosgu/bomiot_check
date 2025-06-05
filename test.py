@@ -1,4 +1,4 @@
-from mac_validator import (
+from bomiot_check import (
     get_mac_address_py,
     encrypt_info,
     encrypt_info_custom,

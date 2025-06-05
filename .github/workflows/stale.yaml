@@ -41,7 +41,7 @@ jobs:
         run: uv pip install --force-reinstall dist/*.whl
         
       - name: Import test
-        run: python -c "import bomiot_check"
+        run: python -c "from bomiot_check import (get_mac_address_py)"
 
       - name: Upload wheels
         uses: actions/upload-artifact@v4
