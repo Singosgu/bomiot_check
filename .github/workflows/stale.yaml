@@ -38,7 +38,7 @@ jobs:
         run: ls -lh dist/
         
       - name: Install wheel (macOS)
-        run: uv pip install --force-reinstall dist/bomiot_check*_universal2.whl
+        run: uv pip install --force-reinstall dist/*.whl
         
       - name: Import test
         run: python -c "import bomiot_check"
