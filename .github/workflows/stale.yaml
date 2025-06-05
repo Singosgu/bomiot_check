@@ -101,7 +101,7 @@ jobs:
       - name: Install OpenSSL and dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y pkg-config libssl-dev
+          sudo apt-get install pkg-config libssl-dev
           echo "PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig" >> $GITHUB_ENV
           echo "OPENSSL_DIR=/usr" >> $GITHUB_ENV
           echo "OPENSSL_INCLUDE_DIR=/usr/include" >> $GITHUB_ENV
@@ -121,7 +121,8 @@ jobs:
         with:
           target: ${{ matrix.target }}
           manylinux: auto
-          args: --release --out dist
+      - run: |
+          python -m maturin build --release --out dist
       - name: Install build wheel
         if: matrix.target == 'x86_64'
         run: |
