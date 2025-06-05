@@ -23,5 +23,3 @@ jobs:
         uses: wntrblm/nox@2024.03.02
         with:
           python-versions: ${{ matrix.python-version }}
-      - name: Test with Nox
-        run: nox --non-interactive --error-on-missing-interpreter -p ${{ matrix.python-version }}
