@@ -71,12 +71,14 @@ jobs:
       - name: Build wheel
         run: |
           echo "Building wheel with maturin..."
-          python -m maturin build --release --interpreter python3 --target-dir dist
+          python -m maturin build --release --interpreter $(which python) --target-dir dist
           echo "Listing dist directory contents after wheel build:"
           ls -la dist/
+          echo "Checking for built wheel files: $(ls dist/*.whl)"
           echo "Checking for wheel files:"
           find dist -name "*.whl" || echo "No wheel files found"
-          echo find dist -name "*.whl"
+          echo "Found wheel files:"
+            find dist -name "*.whl" -exec echo {} \;
 
       # 6. 上传 wheel 产物
       # - name: Upload built wheels
