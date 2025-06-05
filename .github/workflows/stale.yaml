@@ -98,6 +98,13 @@ jobs:
         python-version: ["3.9", "3.10", "3.11", "3.12"]
         target: [x86_64, i686]
     steps:
+      
+
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+      
       - name: Install OpenSSL and dependencies
         run: |
           sudo apt-get update
@@ -109,10 +116,6 @@ jobs:
           echo "OPENSSL_NO_VENDOR=1" >> $GITHUB_ENV
           echo "PYO3_STATIC_LIB=1" >> $GITHUB_ENV
 
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - name: Install uv
-        uses: astral-sh/setup-uv@v3
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
@@ -121,8 +124,15 @@ jobs:
         with:
           target: ${{ matrix.target }}
           manylinux: auto
+
+      - name: Upgrade pip and install build dependencies
+        run: |
+          uv pip install --upgrade pip
+          uv pip install maturin build twine
+      
       - run: |
           python -m maturin build --release --out dist
+        
       - name: Install build wheel
         if: matrix.target == 'x86_64'
         run: |
