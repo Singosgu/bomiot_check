@@ -100,4 +100,4 @@ jobs:
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
         run: |
-            twine upload dist/*.whl dist/*.tar.gz
+            twine upload /dist/*.whl /dist/*.tar.gz
