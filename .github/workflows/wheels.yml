@@ -4,7 +4,7 @@ on:
   push:
     branches: [main, master]
     tags:
-      - 'v*'  # 当推送以 v 开头的标签时触发发布
+      - '*'  # 当推送以 v 开头的标签时触发发布
   pull_request:
 
 jobs:
@@ -71,7 +71,7 @@ jobs:
           ls -la dist/
           echo "Checking for wheel files:"
           find dist -name "*.whl" || echo "No wheel files found"
-          echo '::find dist -name "*.whl"::'
+          echo '::find dist -name "*.whl"'
 
       # 6. 上传 wheel 产物
       # - name: Upload built wheels
