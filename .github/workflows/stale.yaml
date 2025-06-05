@@ -30,7 +30,7 @@ jobs:
           uv pip install maturin build twine
       - name: Build wheels - x86_64
         run: |
-          uv -m maturin build --release --target-dir dist
+          uv maturin build --release --target-dir dist
       - name: Install build wheel - x86_64
         run: |
           uv pip install --force-reinstall dist/bomiot_check*.whl
