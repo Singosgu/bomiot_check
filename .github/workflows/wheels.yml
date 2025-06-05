@@ -71,27 +71,27 @@ jobs:
       - name: Build wheel
         run: |
           echo "开始使用Maturin构建 abi3 wheel.............................."
-          python -m maturin build --release --interpreter python3.9 --target-dir "${{ github.workspace }}"/dist
+          python -m maturin build --release --interpreter python3.9 --target-dir dist
 
       # 6. 上传 wheel 产物
       - name: Upload built wheels
         uses: actions/upload-artifact@v4
         with:
           name: abi3-wheels-${{ runner.os }}
-          path: dist/*.whl
+          path: target/wheels/*.whl
         continue-on-error: true
 
       # 7. 构建并上传 sdist
       - name: Build sdist
         run: |
           echo "开始构建tar包................................"
-          python -m build --sdist --outdir dist/
+          python -m build --sdist --outdir target/wheels/
 
       - name: Upload linux sdist
         uses: actions/upload-artifact@v4
         with:
           name: sdist-${{ runner.os }}
-          path: dist/*.tar.gz
+          path: target/wheels/*.tar.gz
         
       # 8. 发布到 PyPI
       - name: Publish linux to PyPI
@@ -100,4 +100,4 @@ jobs:
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
         run: |
-            twine upload /dist/*.whl /dist/*.tar.gz
+            twine upload /target/wheels/*.whl /target/wheels/*.tar.gz
