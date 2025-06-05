@@ -71,14 +71,14 @@ jobs:
       - name: Build wheel
         run: |
           echo "开始使用Maturin构建 abi3 wheel.............................."
-          python -m maturin build --release --interpreter python3.9 --target-dir dist
+          python -m maturin build --release --interpreter python3.9 --target-dir "${{ github.workspace }}"/dist
 
       # 6. 上传 wheel 产物
       - name: Upload built wheels
         uses: actions/upload-artifact@v4
         with:
           name: abi3-wheels-${{ runner.os }}
-          path: ${{ github.workspace }}/dist/*.whl
+          path: dist/*.whl
         continue-on-error: true
 
       # 7. 构建并上传 sdist
@@ -91,7 +91,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: sdist-${{ runner.os }}
-          path: ${{ github.workspace }}/dist/*.tar.gz
+          path: dist/*.tar.gz
         
       # 8. 发布到 PyPI
       - name: Publish linux to PyPI
