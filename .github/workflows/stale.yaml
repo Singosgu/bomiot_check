@@ -110,7 +110,12 @@ jobs:
         run: |
           find /usr -name "openssl.pc"
           find /usr -name "pkgconfig"
-          echo "PKG_CONFIG_PATH=/usr/local/lib/pkgconfig" >> $GITHUB_ENV
+          echo "PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig" >> $GITHUB_ENV
+          echo "OPENSSL_DIR=/usr" >> $GITHUB_ENV
+          echo "OPENSSL_INCLUDE_DIR=/usr/include" >> $GITHUB_ENV
+          echo "OPENSSL_LIB_DIR=/usr/lib/x86_64-linux-gnu" >> $GITHUB_ENV
+          echo "OPENSSL_NO_VENDOR=1" >> $GITHUB_ENV
+          echo "PYO3_STATIC_LIB=1" >> $GITHUB_ENV
           pkg-config --libs --cflags openssl
       
       - name: Setup Rust
