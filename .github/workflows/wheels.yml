@@ -101,4 +101,7 @@ jobs:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
         run: |
-          python -m twine upload dist/*
+          for file in $(ls **/*)
+          do
+            twine upload --non-interactive -u $TWINE_USERNAME -p $TWINE_PASSWORD $file || continue
+          done
