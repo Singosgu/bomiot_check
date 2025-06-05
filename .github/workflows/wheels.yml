@@ -13,7 +13,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [windows-latest]
 
     steps:
       # 1. 检出仓库代码
@@ -149,6 +149,6 @@ jobs:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
         run: |
-            twine upload -u $TWINE_USERNAME -p $TWINE_PASSWORD D:\a\bomiot_check\bomiot_check\target\wheels\*
+            twine upload -u $TWINE_USERNAME -p $TWINE_PASSWORD  ${{ github.workspace }}/target/wheels/*
 
 
