@@ -106,7 +106,6 @@ jobs:
       - name: Find openssl.pc
         run: |
           find /usr -name "openssl.pc"
-          find /usr -name "pkgconfig"
           echo "PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig" >> $GITHUB_ENV
           pkg-config --libs --cflags openssl
       
@@ -121,12 +120,14 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Build Wheels
         uses: PyO3/maturin-action@v1
+        env:
+            PKG_CONFIG_PATH: /usr/lib/x86_64-linux-gnu/pkgconfig
         with:
+          docker-options: --env PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig 
           target: ${{ matrix.target }}
           manylinux: auto
           args: --release --out dist
-        env:
-          PKG_CONFIG_PATH: /usr/lib/x86_64-linux-gnu/pkgconfig
+        
         
       - name: Upgrade pip and install build dependencies
         run: |
