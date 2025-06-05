@@ -24,11 +24,13 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: aarch64-apple-darwin
+      - name: Upgrade pip and install build dependencies
+        run: |
+          uv pip install --upgrade pip
+          uv pip install maturin build twine
       - name: Build wheels - x86_64
-        uses: PyO3/maturin-action@v1
-        with:
-          target: x86_64
-          args: -i python --release --out dist
+        run: |
+          uv -m maturin build --release --target-dir dist
       - name: Install build wheel - x86_64
         run: |
           uv pip install --force-reinstall dist/bomiot_check*.whl
