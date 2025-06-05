@@ -11,6 +11,13 @@ use rand::Rng;
 const KEY: &[u8] = b"your-32-byte-secret-key-here!!!!";
 const NONCE_LEN: usize = 12;
 
+
+#[pymodule]
+fn bomiot_check(_py: Python, m: &PyModule) -> PyResult<()> {
+    // ...
+    Ok(())
+}
+
 #[pyfunction]
 fn get_mac_address_py() -> PyResult<String> {
     let mac = get_mac_address()
@@ -96,6 +103,7 @@ fn verify_info_custom(encrypted: &str, mac: &str) -> PyResult<(bool, bool)> {
 
 #[pymodule]
 fn mac_validator(_py: Python, m: &PyModule) -> PyResult<()> {
+    m.add_function(wrap_pyfunction!(bomiot_check, m)?)?;
     m.add_function(wrap_pyfunction!(get_mac_address_py, m)?)?;
     m.add_function(wrap_pyfunction!(encrypt_info, m)?)?;
     m.add_function(wrap_pyfunction!(encrypt_info_custom, m)?)?;
