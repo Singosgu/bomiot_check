@@ -104,14 +104,13 @@ jobs:
         uses: astral-sh/setup-uv@v3
       
       - name: Install OpenSSL dev
-        run: sudo apt-get update && sudo apt-get install --reinstall -y libssl-dev pkg-config
+        run: sudo apt-get update && sudo apt-get install --reinstall -y libssl-dev pkg-config openssl-dev
       
       - name: Find openssl.pc
-        run: find /usr -name "openssl.pc"
+        run: |
+          find /usr -name "openssl.pc"
+          find /usr -name "pkgconfig"
       
-      - name: Set PKG_CONFIG_PATH
-        run: echo "PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig" >> $GITHUB_ENV
-
       - name: Setup Rust
         uses: actions-rs/toolchain@v1
         with:
