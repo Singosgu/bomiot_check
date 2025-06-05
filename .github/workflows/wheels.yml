@@ -78,20 +78,20 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: abi3-wheels-${{ runner.os }}
-          path: ${{ github.workspace }}/target/wheels/*.whl
+          path: ${{ github.workspace }}/dist/*.whl
         continue-on-error: true
 
       # 7. 构建并上传 sdist
       - name: Build sdist
         run: |
           echo "开始构建tar包................................"
-          python -m build --sdist --outdir target/wheels/
+          python -m build --sdist --outdir dist/
 
       - name: Upload linux sdist
         uses: actions/upload-artifact@v4
         with:
           name: sdist-${{ runner.os }}
-          path: ${{ github.workspace }}/target/wheels/*.tar.gz
+          path: ${{ github.workspace }}/dist/*.tar.gz
         
       # 8. 发布到 PyPI
       - name: Publish linux to PyPI
@@ -100,4 +100,4 @@ jobs:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
         run: |
-            twine upload -u $TWINE_USERNAME -p $TWINE_PASSWORD ${{ github.workspace }}/target/wheels/*
+            twine upload -u "${{ secrets.TWINE_USERNAME }}" -p "${{ secrets.TWINE_PASSWORD }}" ${{ github.workspace }}/dist/*
