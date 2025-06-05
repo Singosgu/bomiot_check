@@ -100,4 +100,4 @@ jobs:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
         run: |
-            twine upload -u "${{ secrets.TWINE_USERNAME }}" -p "${{ secrets.TWINE_PASSWORD }}" ${{ github.workspace }}/dist/*.whl ${{ github.workspace }}/dist/*.tar.gz
+            twine upload dist/*.whl dist/*.tar.gz
