@@ -29,10 +29,10 @@ jobs:
           uv pip install --upgrade pip
           uv pip install maturin build twine
       
-      - name: Build wheels - universal2
+      - name: Build universal2 wheel (macOS)
         uses: PyO3/maturin-action@v1
         with:
-          args: -i python --release --universal2 --out dist
+          args: --release --target universal2-apple-darwin --out dist
         
       - name: List wheels
         run: ls -lh dist/
@@ -43,11 +43,11 @@ jobs:
       - name: Import test
         run: python -c "import bomiot_check"
 
-      # - name: Upload wheels
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: wheels-${{ github.job }}-universal-${{ matrix.python-version }}
-      #     path: dist
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-${{ github.job }}-universal-${{ matrix.python-version }}
+          path: dist
   windows:
     runs-on: windows-latest
     strategy:
