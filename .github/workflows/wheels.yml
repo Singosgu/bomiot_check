@@ -70,11 +70,11 @@ jobs:
       # 5. 使用 maturin 构建 abi3 wheel
       - name: Build wheel
         run: |
-          echo "Building wheel with maturin..."
-          python -m maturin build --release --interpreter $(which python) --target-dir dist
+          echo "开始启动Maturin构建............................."
+          python -m maturin build --release --out /home
           echo "Listing dist directory contents after wheel build:"
           ls -la dist/
-          echo "Checking for built wheel files: $(ls dist/*.whl)"
+          echo "检查路径: $(ls home/*.whl)"
           echo "Checking for wheel files:"
           find dist -name "*.whl" || echo "No wheel files found"
           echo "Found wheel files:"
