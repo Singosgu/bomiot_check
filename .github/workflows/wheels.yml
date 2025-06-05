@@ -71,15 +71,24 @@ jobs:
       - name: Build wheel
         run: |
           echo "开始使用Maturin构建 abi3 wheel.............................."
-          python -m maturin build --release --interpreter $(which python) --target-dir dist
+          python -m maturin build --release --interpreter python3.9 --target-dir dist
 
       # 6. 上传 wheel 产物
-      # - name: Upload built wheels
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: abi3-wheels-${{ runner.os }}
-      #     path: dist/*.whl
-      #   continue-on-error: true
+      - name: Upload linux built wheels
+        uses: actions/upload-artifact@v4
+        if: runner.os == 'linux' 
+        with:
+          name: abi3-wheels-${{ runner.os }}
+          path: /home/runner/work/bomiot_check/bomiot_check/target/wheels/bomiot_check-0.2.2-cp39-abi3-manylinux_2_34_x86_64.whl
+        continue-on-error: true
+
+      - name: Upload macos built wheels
+        uses: actions/upload-artifact@v4
+        if: runner.os == 'linux' 
+        with:
+          name: abi3-wheels-${{ runner.os }}
+          path: /Users/runner/work/bomiot_check/bomiot_check/target/wheels/bomiot_check-0.2.2-cp39-abi3-macosx_11_0_arm64.whl
+        continue-on-error: true
 
       # # 7. 构建并上传 sdist
       # - name: Build sdist
