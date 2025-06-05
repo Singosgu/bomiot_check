@@ -75,34 +75,56 @@ jobs:
 
       # 6. 上传 wheel 产物
       - name: Upload linux built wheels
-        uses: actions/upload-artifact@v4
         if: runner.os == 'linux' 
+        uses: actions/upload-artifact@v4
         with:
           name: abi3-wheels-${{ runner.os }}
           path: /home/runner/work/bomiot_check/bomiot_check/target/wheels/bomiot_check-0.2.2-cp39-abi3-manylinux_2_34_x86_64.whl
         continue-on-error: true
 
       - name: Upload macos built wheels
-        uses: actions/upload-artifact@v4
         if: runner.os == 'linux' 
+        uses: actions/upload-artifact@v4
         with:
           name: abi3-wheels-${{ runner.os }}
           path: /Users/runner/work/bomiot_check/bomiot_check/target/wheels/bomiot_check-0.2.2-cp39-abi3-macosx_11_0_arm64.whl
         continue-on-error: true
 
-      # # 7. 构建并上传 sdist
-      # - name: Build sdist
-      #   run: |
-      #     echo "Building sdist..."
-      #     python -m build --sdist --outdir dist
-      #     echo "Listing dist directory contents after sdist:"
-      #     ls -la dist/
+      - name: Upload windows built wheels
+        if: runner.os == 'windows' 
+        uses: actions/upload-artifact@v4
+        with:
+          name: abi3-wheels-${{ runner.os }}
+          path: D:\a\bomiot_check\bomiot_check\target\wheels\bomiot_check-0.2.2-cp39-abi3-win_amd64.whl
+        continue-on-error: true
 
-      # - name: Upload sdist
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: sdist-${{ runner.os }}
-      #     path: dist/*.tar.gz
+      # 7. 构建并上传 sdist
+      - name: Build sdist
+        run: |
+          echo "开始构建tar包................................"
+          python -m build --sdist --outdir dist
+
+      - name: Upload linux sdist
+        if: runner.os == 'linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdist-${{ runner.os }}
+          path: /home/runner/work/bomiot_check/bomiot_check/target/wheels/bomiot_check-0.2.2.tar.gz
+        
+      - name: Upload macos sdist
+        if: runner.os == 'maxos'
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdist-${{ runner.os }}
+          path: /Users/runner/work/bomiot_check/bomiot_check/target/wheels/bomiot_check-0.2.2.tar.gz
+
+      - name: Upload windows sdist
+        if: runner.os == 'windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdist-${{ runner.os }}
+          path: D:\a\bomiot_check\bomiot_check\target\wheels\bomiot_check-0.2.2.tar.gz
+
 
       # # 8. 发布到 PyPI
       # - name: Publish to PyPI
