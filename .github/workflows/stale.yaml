@@ -110,7 +110,7 @@ jobs:
         with:
           target: ${{ matrix.target }}
           manylinux: auto
-          args: -i python${{ matrix.python-version }} --release --out dist
+          args: --release --out dist
       - name: Install build wheel
         if: matrix.target == 'x86_64'
         run: |
@@ -142,7 +142,7 @@ jobs:
         with:
           target: ${{ matrix.target }}
           manylinux: auto
-          args: -i python${{matrix.python.version}} --release --out dist
+          args: --release --out dist
       - uses: uraimo/run-on-arch-action@v2
         name: Install build wheel
         with:
@@ -173,7 +173,7 @@ jobs:
   merge:
     name: Building Single Artifact
     runs-on: ubuntu-latest
-    needs: [macos, windows]
+    needs: [macos, windows, linux, linux-cross]
     steps:
       - name: Downloading all Artifacts
         uses: actions/download-artifact@v4
@@ -193,7 +193,7 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    needs: [macos, windows, merge]
+    needs: [macos, windows, linux, linux-cross, merge]
     steps:
       - uses: actions/download-artifact@v4
         with:
