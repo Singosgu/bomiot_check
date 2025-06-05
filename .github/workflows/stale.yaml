@@ -110,6 +110,8 @@ jobs:
         run: |
           find /usr -name "openssl.pc"
           find /usr -name "pkgconfig"
+          echo "PKG_CONFIG_PATH=/usr/local/lib/pkgconfig" >> $GITHUB_ENV
+          pkg-config --libs --cflags openssl
       
       - name: Setup Rust
         uses: actions-rs/toolchain@v1
