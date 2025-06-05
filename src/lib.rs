@@ -97,7 +97,6 @@ fn verify_info_custom(encrypted: &str, mac: &str) -> PyResult<(bool, bool)> {
 
 #[pymodule]
 fn bomiot_check(_py: Python, m: &PyModule) -> PyResult<()> {
-    m.add_function(wrap_pyfunction!(bomiot_check, m)?)?;
     m.add_function(wrap_pyfunction!(get_mac_address_py, m)?)?;
     m.add_function(wrap_pyfunction!(encrypt_info, m)?)?;
     m.add_function(wrap_pyfunction!(encrypt_info_custom, m)?)?;
