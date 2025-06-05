@@ -96,7 +96,7 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.9", "3.10", "3.11", "3.12"]
-        target: [x86_64]
+        target: [x86_64, i686]
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -108,23 +108,22 @@ jobs:
 
       - name: Setup Rust
         uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
 
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - name: Build Wheels
         uses: PyO3/maturin-action@v1
-        with:
-          target: ${{ matrix.target }}
-          manylinux: auto
-          args: --release --out dist
       - name: Upgrade pip and install build dependencies
         run: |
           uv pip install --upgrade pip
           uv pip install maturin build twine
+
+      - name: Build wheel
+        run: |
+          echo "开始使用Maturin构建 abi3 wheel.............................."
+          python -m maturin build --release --interpreter $(which python) --target "${{ matrix.target }}" --out dist
+        
       
       - name: Install build wheel
         if: matrix.target == 'x86_64'
