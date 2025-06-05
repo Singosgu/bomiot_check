@@ -102,7 +102,7 @@ jobs:
       - name: Build sdist
         run: |
           echo "开始构建tar包................................"
-          python -m build --sdist --outdir dist
+          python -m build --sdist --outdir target/wheels/
 
       - name: Upload linux sdist
         if: runner.os == 'linux'
@@ -126,14 +126,29 @@ jobs:
           path: D:\a\bomiot_check\bomiot_check\target\wheels\bomiot_check-0.2.2.tar.gz
 
 
-      # # 8. 发布到 PyPI
-      # - name: Publish to PyPI
-      #   if: startsWith(github.ref, 'refs/tags/v')
-      #   env:
-      #     TWINE_USERNAME: __token__
-      #     TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-      #   run: |
-      #     for file in $(ls **/*)
-      #     do
-      #       twine upload -u $TWINE_USERNAME -p $TWINE_PASSWORD $file || continue
-      #     done
+      # 8. 发布到 PyPI
+      - name: Publish linux to PyPI
+        if: runner.os == 'linux' && startsWith(github.ref, 'refs/tags/v')
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+            twine upload -u $TWINE_USERNAME -p $TWINE_PASSWORD /home/runner/work/bomiot_check/bomiot_check/target/wheels/*
+
+      - name: Publish macos to PyPI
+        if: runner.os == 'macos' && startsWith(github.ref, 'refs/tags/v')
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+            twine upload -u $TWINE_USERNAME -p $TWINE_PASSWORD /Users/runner/work/bomiot_check/bomiot_check/target/wheels/*
+
+      - name: Publish windows to PyPI
+        if: runner.os == 'windows' && startsWith(github.ref, 'refs/tags/v')
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+            twine upload -u $TWINE_USERNAME -p $TWINE_PASSWORD D:\a\bomiot_check\bomiot_check\target\wheels\*
+
+
