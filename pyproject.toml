@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "bomiot_check"
-version = "0.2.9"
+version = "0.3.0"
 description = "A Python package for MAC address validation and encryption"
 authors = [{ name = "Bomiot", email = "Singosgu@gmail.com" }]
 readme = "README.md"
