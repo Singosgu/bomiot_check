@@ -209,12 +209,10 @@ jobs:
             -e OPENSSL_NO_VENDOR=1
           before-script-linux: |
             lsb_release -a
-            sudo apt-get update && sudo apt-get -y install pkg-config libssl-dev  
+            apt-get update && apt-get -y install pkg-config libssl-dev  
             ls /usr/lib/x86_64-linux-gnu/pkgconfig/openssl.pc
-            sudo find /usr -name "openssl.pc"
-            sudo find /usr -name "opensslconf.h" 2>/dev/null
-            ls /usr/include/x86_64-linux-gnu/openssl/opensslconf.h
-            pkg-config --cflags openssl
+            find /usr -name "openssl.pc"
+            find /usr -name "opensslconf.h" 2>/dev/null
             pkg-config --libs openssl
           target: ${{ matrix.target }}
           manylinux: auto
