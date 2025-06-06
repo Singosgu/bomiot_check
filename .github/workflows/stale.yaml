@@ -210,11 +210,8 @@ jobs:
             -e OPENSSL_NO_VENDOR=1
             -e PYO3_STATIC_LIB=1
           before-script-linux: |
-            if command -v apt-get &>/dev/null; then
-                apt-get update -y && apt-get install -y libssl-dev pkg-config
-            elif command -v yum &>/dev/null; then
-                yum install -y openssl-devel pkgconfig
-            fi
+            sudo apt-get update -y
+            sudo apt-get install pkg-config libssl-dev  
             lsb_release -a
             ls /usr/lib/x86_64-linux-gnu/pkgconfig/openssl.pc
             sudo find /usr -name "openssl.pc"
