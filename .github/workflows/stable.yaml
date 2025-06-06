@@ -27,12 +27,11 @@ jobs:
         uses: PyO3/maturin-action@v1
         with:
           command: --version
-
       # 安装 Python，确保 pip 可用
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.11"
 
       # 安装 cibuildwheel
       - name: Install cibuildwheel
