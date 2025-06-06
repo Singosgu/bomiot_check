@@ -200,7 +200,6 @@ jobs:
           OPENSSL_INCLUDE_DIR: /usr/include
           OPENSSL_LIB_DIR: /usr/lib/x86_64-linux-gnu
           OPENSSL_NO_VENDOR: "1"
-          PYO3_STATIC_LIB: "1"
         with:
           docker-options: |
             -e PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig
@@ -208,13 +207,14 @@ jobs:
             -e OPENSSL_INCLUDE_DIR=/usr/include
             -e OPENSSL_LIB_DIR=/usr/lib/x86_64-linux-gnu
             -e OPENSSL_NO_VENDOR=1
-            -e PYO3_STATIC_LIB=1
           before-script-linux: |
             lsb_release -a
             sudo apt-get update && sudo apt-get -y install pkg-config libssl-dev  
             ls /usr/lib/x86_64-linux-gnu/pkgconfig/openssl.pc
             sudo find /usr -name "openssl.pc"
-            pkg-config --libs --cflags openssl
+            ls /usr/include/openssl/opensslconf.h
+            pkg-config --cflags openssl
+            pkg-config --libs openssl
           target: ${{ matrix.target }}
           manylinux: auto
           args: --release --out dist
