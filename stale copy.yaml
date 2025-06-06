@@ -95,6 +95,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
         target: [x86_64, i686]
     steps:
       - uses: actions/checkout@v4
@@ -117,24 +118,59 @@ jobs:
         
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
-      
+          python-version: ${{ matrix.python-version }}
       - name: Build x86_64 Wheels
         if: matrix.target == 'x86_64'
         uses: PyO3/maturin-action@v1
+        env:
+          PKG_CONFIG_PATH: /usr/lib64/pkgconfig
+          OPENSSL_DIR: /usr
+          OPENSSL_INCLUDE_DIR: /usr/include
+          OPENSSL_LIB_DIR: /usr/lib64
+          OPENSSL_NO_VENDOR: "1"
+          PYO3_STATIC_LIB: "1"
         with:
-          command: --version
-      
-      - name: Install cibuildwheel
-        run: uv pip install cibuildwheel
-
-      # 构建所有 Python 版本和平台的 wheel
-      - name: Build wheels
-        run: cibuildwheel --output-dir dist
-
-      - name: List built wheels
-        run: ls -lh dist/  
-
+          docker-options: |
+            -e PKG_CONFIG_PATH=/usr/lib64/pkgconfig
+            -e OPENSSL_DIR=/usr
+            -e OPENSSL_INCLUDE_DIR=/usr/include
+            -e OPENSSL_LIB_DIR=/usr/lib64
+            -e OPENSSL_NO_VENDOR=1
+            -e PYO3_STATIC_LIB=1
+          before-script-linux: |
+            yum install -y openssl-devel pkgconfig
+            rustc --version
+            python --version
+            find /usr -name "openssl.pc"
+            find /usr -name "opensslconf.h" 2>/dev/null
+          target: ${{ matrix.target }}
+          manylinux: auto
+          args: --release --out dist
+      - name: Build i686 Wheels
+        if: matrix.target == 'i686'
+        uses: PyO3/maturin-action@v1
+        env:
+          PKG_CONFIG_PATH: /usr/lib/pkgconfig
+          OPENSSL_DIR: /usr
+          OPENSSL_INCLUDE_DIR: /usr/include
+          OPENSSL_LIB_DIR: /usr/lib
+          OPENSSL_NO_VENDOR: "1"
+          PYO3_STATIC_LIB: "1"
+        with:
+          docker-options: |
+            -e PKG_CONFIG_PATH=/usr/lib/pkgconfig
+            -e OPENSSL_DIR=/usr
+            -e OPENSSL_INCLUDE_DIR=/usr/include
+            -e OPENSSL_LIB_DIR=/usr/lib
+            -e OPENSSL_NO_VENDOR=1
+            -e PYO3_STATIC_LIB=1
+          before-script-linux: |
+            yum install -y openssl-devel pkgconfig
+            rustc --version
+            find /usr -name "openssl.pc"
+          target: ${{ matrix.target }}
+          manylinux: auto
+          args: --release --out dist     
       - name: Install build wheel
         if: matrix.target == 'x86_64'
         run: |
