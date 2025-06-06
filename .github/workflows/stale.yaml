@@ -166,7 +166,7 @@ jobs:
             rustc --version
             find /usr -name "openssl.pc"
           target: ${{ matrix.target }}
-          args: --release --interpreters $(which python)--manylinux --out dist     
+          args: --release -i $(which python) --manylinux --out dist     
       - name: Install build wheel
         if: matrix.target == 'x86_64'
         run: |
