@@ -60,7 +60,7 @@ jobs:
       - name: Upload wheel artifact
         uses: actions/upload-artifact@v4
         with:
-          name: wheels-${{ matrix.os }}
+          name: wheels
           path: dist
 
   # 可选：自动上传 PyPI
@@ -71,8 +71,9 @@ jobs:
       - name: Download Linux wheels
         uses: actions/download-artifact@v4
         with:
-          name: wheels-ubuntu-latest
           path: dist
+          pattern: wheels-*
+          merge-multiple: true
       - name: List downloaded wheels
         run: ls -lh dist/
 
