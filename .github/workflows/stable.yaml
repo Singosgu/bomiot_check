@@ -19,8 +19,7 @@ jobs:
         uses: actions/checkout@v4
 
       # 安装 Rust 编译器工具链（必须！）
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@stable
 
       # 可选：检测 maturin 环境，检查 PyO3 和 maturin 能否正常运行
       - name: Maturin sanity check
@@ -31,7 +30,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.12"
 
       # 安装 cibuildwheel
       - name: Install cibuildwheel
@@ -68,16 +67,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: wheels-ubuntu-latest
-          path: dist
-      - name: Download macOS wheels
-        uses: actions/download-artifact@v4
-        with:
-          name: wheels-macos-13
-          path: dist
-      - name: Download Windows wheels
-        uses: actions/download-artifact@v4
-        with:
-          name: wheels-windows-latest
           path: dist
       - name: Publish to PyPI
         env:
