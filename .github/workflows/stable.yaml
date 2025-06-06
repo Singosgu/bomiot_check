@@ -1,0 +1,83 @@
+name: Build & Publish Wheels
+
+on:
+  push:
+    branches: [main, master]
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-wheels:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-13, windows-latest]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # 安装 Rust 编译器工具链（必须！）
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      # 可选：检测 maturin 环境，检查 PyO3 和 maturin 能否正常运行
+      - name: Maturin sanity check
+        uses: PyO3/maturin-action@v1
+        with:
+          command: --version
+
+      # 安装 Python，确保 pip 可用
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # 安装 cibuildwheel
+      - name: Install cibuildwheel
+        run: pip install cibuildwheel
+
+      # Linux 下如需依赖 OpenSSL，可加上环境变量
+      - name: Build wheels
+        env:
+          # 如有需要可加额外依赖环境变量，比如
+          # CIBW_ENVIRONMENT: 'OPENSSL_DIR=/usr OPENSSL_NO_VENDOR=1'
+        run: cibuildwheel --output-dir dist
+
+      - name: List built wheels
+        run: ls -lh dist/
+
+      # 保存 wheel 产物（如需后续上传或发布）
+      - name: Upload wheel artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-${{ matrix.os }}
+          path: dist
+
+  # 可选：自动上传 PyPI
+  publish:
+    needs: build-wheels
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Linux wheels
+        uses: actions/download-artifact@v4
+        with:
+          name: wheels-ubuntu-latest
+          path: dist
+      - name: Download macOS wheels
+        uses: actions/download-artifact@v4
+        with:
+          name: wheels-macos-13
+          path: dist
+      - name: Download Windows wheels
+        uses: actions/download-artifact@v4
+        with:
+          name: wheels-windows-latest
+          path: dist
+      - name: Publish to PyPI
+        env:
+          TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
+        run: |
+          pip install twine
+          twine upload --skip-existing dist/*
