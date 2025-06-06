@@ -5,10 +5,11 @@ on:
     branches: [main, master]
     tags:
       - 'v*'
-  workflow_dispatch:
+  pull_request:
 
 jobs:
   build-wheels:
+    name: Build abi3 wheel on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
