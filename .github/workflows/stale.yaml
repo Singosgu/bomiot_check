@@ -93,6 +93,10 @@ jobs:
           path: dist
   linux:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        target: [x86_64]
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -100,20 +104,7 @@ jobs:
         uses: astral-sh/setup-uv@v3
         with:
           version: "latest"
-      - name: Install dependencies
-        run: pip install maturin build
-      - name: Build wheels for all Pythons
-        run: |
-          for PYBIN in /opt/python/cp{39,310,311,312,313}-cp*/bin/python; do
-            echo "Building for $PYBIN"
-            "$PYBIN" -m pip install --upgrade pip setuptools wheel
-            maturin build --release -i "$PYBIN" --out dist
-          done
-        env:
-          OPENSSL_DIR: /usr
-          OPENSSL_NO_VENDOR: "1"
-      - name: 列出列表
-        run: ls -lh dist/
+      
       - name: Find openssl.pc
         run: |
           find /usr -name "openssl.pc"
@@ -124,12 +115,10 @@ jobs:
         with:
           toolchain: stable
           override: true
-        
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - name: Build x86_64 Wheels
-        if: matrix.target == 'x86_64'
         uses: PyO3/maturin-action@v1
         env:
           PKG_CONFIG_PATH: /usr/lib64/pkgconfig
@@ -149,46 +138,19 @@ jobs:
           before-script-linux: |
             yum install -y openssl-devel pkgconfig
             rustc --version
-            python --version
             find /usr -name "openssl.pc"
             find /usr -name "opensslconf.h" 2>/dev/null
           target: ${{ matrix.target }}
           manylinux: auto
-          args: --release --out dist
-      - name: Build i686 Wheels
-        if: matrix.target == 'i686'
-        uses: PyO3/maturin-action@v1
-        env:
-          PKG_CONFIG_PATH: /usr/lib/pkgconfig
-          OPENSSL_DIR: /usr
-          OPENSSL_INCLUDE_DIR: /usr/include
-          OPENSSL_LIB_DIR: /usr/lib
-          OPENSSL_NO_VENDOR: "1"
-          PYO3_STATIC_LIB: "1"
-        with:
-          docker-options: |
-            -e PKG_CONFIG_PATH=/usr/lib/pkgconfig
-            -e OPENSSL_DIR=/usr
-            -e OPENSSL_INCLUDE_DIR=/usr/include
-            -e OPENSSL_LIB_DIR=/usr/lib
-            -e OPENSSL_NO_VENDOR=1
-            -e PYO3_STATIC_LIB=1
-          before-script-linux: |
-            yum install -y openssl-devel pkgconfig
-            rustc --version
-            find /usr -name "openssl.pc"
-          target: ${{ matrix.target }}
-          manylinux: auto
-          args: --release -i python${{ matrix.python-version }} --out dist     
+          args: --release --interpreter python${{ matrix.python-version }} --out dist
       - name: Install build wheel
-        if: matrix.target == 'x86_64'
         run: |
           uv pip install --force-reinstall dist/*.whl
           cd ~ && python -c 'import bomiot_check'
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
-          name: wheels-${{ github.job }}-${{ matrix.target }}-${{ matrix.python-version }}
+          name: wheels-${{ github.job }}-${{ matrix.target }}-"3.12"
           path: dist
   merge:
     name: Building Single Artifact
