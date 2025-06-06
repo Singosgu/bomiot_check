@@ -102,6 +102,8 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - name: Install uv
         uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
       
       - name: Find openssl.pc
         run: |
@@ -138,6 +140,7 @@ jobs:
           before-script-linux: |
             yum install -y openssl-devel pkgconfig
             rustc --version
+            python --version
             find /usr -name "openssl.pc"
             find /usr -name "opensslconf.h" 2>/dev/null
           target: ${{ matrix.target }}
