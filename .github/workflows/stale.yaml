@@ -195,6 +195,12 @@ jobs:
         uses: PyO3/maturin-action@v1
         env:
           PYO3_CROSS_LIB_DIR: /opt/python/${{ matrix.python.abi }}/lib
+          PKG_CONFIG_PATH: /usr/lib/x86_64-linux-gnu/pkgconfig
+          OPENSSL_DIR: /usr
+          OPENSSL_INCLUDE_DIR: /usr/include
+          OPENSSL_LIB_DIR: /usr/lib/x86_64-linux-gnu
+          OPENSSL_NO_VENDOR: "1"
+          PYO3_STATIC_LIB: "1"
         with:
           docker-options: |
             -e PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig
@@ -210,8 +216,8 @@ jobs:
                 yum install -y openssl-devel pkgconfig
             fi
             lsb_release -a
-            rustc --version
-            find /usr -name "openssl.pc"
+            ls /usr/lib/x86_64-linux-gnu/pkgconfig/openssl.pc
+            sudo find /usr -name "openssl.pc"
           target: ${{ matrix.target }}
           manylinux: auto
           args: --release --out dist
