@@ -13,7 +13,7 @@ jobs:
     runs-on: macos-13
     strategy:
       matrix:
-        python-version: [3.9, 3.10, 3.11, 3.12, 3.13]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v4
       - name: Install uv
@@ -52,7 +52,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        python-version: [3.9, 3.10, 3.11, 3.12, 3.13]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
         target: [x64, x86]
     steps:
       - uses: actions/checkout@v4
@@ -95,7 +95,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.9, 3.10, 3.11, 3.12, 3.13]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
         target: [x86_64]
     steps:
       - uses: actions/checkout@v4
@@ -150,7 +150,7 @@ jobs:
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
-          name: wheels-${{ github.job }}-${{ matrix.target }}-"3.12"
+          name: wheels-${{ github.job }}-${{ matrix.target }}-${{ matrix.python-version }}
           path: dist
   merge:
     name: Building Single Artifact
