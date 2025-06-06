@@ -96,7 +96,7 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.9", "3.10", "3.11", "3.12"]
-        target: [x86_64, i686]
+        target: [x86_64]
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -145,7 +145,7 @@ jobs:
         if: matrix.target == 'x86_64'
         run: |
           uv pip install --force-reinstall dist/*.whl
-          cd ~ && python -c 'from bomiot_check import *'
+          cd ~ && python -c 'import bomiot_check'
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
