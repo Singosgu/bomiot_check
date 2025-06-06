@@ -21,6 +21,9 @@ jobs:
       # 安装 Rust 编译器工具链（必须！）
       - uses: dtolnay/rust-toolchain@stable
 
+      - name: 查看cargo装好了没有
+        run: echo $PATH && which cargo && cargo --version
+
       # 可选：检测 maturin 环境，检查 PyO3 和 maturin 能否正常运行
       - name: Maturin sanity check
         uses: PyO3/maturin-action@v1
