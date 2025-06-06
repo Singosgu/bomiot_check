@@ -41,6 +41,7 @@ jobs:
       # Linux 下如需依赖 OpenSSL，可加上环境变量
       - name: Build wheels
         env:
+          CIBW_BUILD: "cp39-* cp310-* cp311-* cp312-*"
           CIBW_BEFORE_ALL_LINUX: "yum install -y openssl-devel pkgconfig"
           CIBW_ENVIRONMENT: 'OPENSSL_DIR=/usr OPENSSL_NO_VENDOR=1'
         run: cibuildwheel --output-dir dist
