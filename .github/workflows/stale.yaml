@@ -139,6 +139,7 @@ jobs:
             yum install -y openssl-devel pkgconfig
             rustc --version
             find /usr -name "openssl.pc"
+            find /usr -name "opensslconf.h" 2>/dev/null
           target: ${{ matrix.target }}
           manylinux: auto
           args: --release --out dist
