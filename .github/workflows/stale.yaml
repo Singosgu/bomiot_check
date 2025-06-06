@@ -129,6 +129,7 @@ jobs:
             -e PYO3_STATIC_LIB=1
           before-script-linux: |
             yum install -y openssl-devel pkgconfig
+            pkg-config --libs --cflags openssl
           target: ${{ matrix.target }}
           manylinux: auto
           args: --release --out dist
