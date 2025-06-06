@@ -75,6 +75,15 @@ jobs:
           path: dist
       - name: List downloaded wheels
         run: ls -lh dist/
+
+      - name: Show first 20 lines of METADATA
+        run: |
+          for whl in dist/*.whl; do
+            unzip -q "$whl" -d whl_unpacked
+            echo "----- $whl METADATA -----"
+            head -20 whl_unpacked/*.dist-info/METADATA
+            rm -rf whl_unpacked
+          done
       - name: Publish to PyPI
         env:
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
