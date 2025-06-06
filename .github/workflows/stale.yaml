@@ -123,7 +123,13 @@ jobs:
         env:
             PKG_CONFIG_PATH: /usr/lib/x86_64-linux-gnu/pkgconfig
         with:
-          docker-options: --env PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig OPENSSL_DIR=/usr OPENSSL_INCLUDE_DIR=/usr/include OPENSSL_LIB_DIR=/usr/lib/x86_64-linux-gnu OPENSSL_NO_VENDOR=1 PYO3_STATIC_LIB=1
+          docker-options: |
+            -e PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig
+            -e OPENSSL_DIR=/usr
+            -e OPENSSL_INCLUDE_DIR=/usr/include
+            -e OPENSSL_LIB_DIR=/usr/lib/x86_64-linux-gnu
+            -e OPENSSL_NO_VENDOR=1
+            -e PYO3_STATIC_LIB=1
           target: ${{ matrix.target }}
           manylinux: auto
           args: --release --out dist
