@@ -127,7 +127,8 @@ jobs:
             -e OPENSSL_LIB_DIR=/usr/lib/x86_64-linux-gnu
             -e OPENSSL_NO_VENDOR=1
             -e PYO3_STATIC_LIB=1
-          before-script-linux: apt-get install -y openssl-devel pkgconfig
+          before-script-linux: |
+            yum install -y openssl-devel pkgconfig
           target: ${{ matrix.target }}
           manylinux: auto
           args: --release --out dist
