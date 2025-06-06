@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "bomiot_check"
-version = "0.2.8"
+version = "0.2.9"
 description = "A Python package for MAC address validation and encryption"
 license = { file = "LICENSE" }
 classifiers = [
@@ -17,6 +17,6 @@ classifiers = [
 ]
 
 [tool.maturin]
-module-name = "bomiot_check"
+module = { name = "bomiot_check" }
 features = ["pyo3/extension-module"]
 python = { source = "python_src" }
