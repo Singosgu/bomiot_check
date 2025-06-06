@@ -6,7 +6,17 @@ build-backend = "maturin"
 name = "bomiot_check"
 version = "0.2.9"
 description = "A Python package for MAC address validation and encryption"
-license = "MIT"
+authors = ["Bomiot <Singosgu@gmail.com>"]
+readme = "README.md"
+homepage = "https://github.com/Bomiot/Bomiot"
+repository = "https://github.com/Bomiot/Bomiot"
+keywords = ["Bomiot", "bomiot"]
+include = [
+    "LICENSE"
+]
+
+exclude = [
+]
 classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
