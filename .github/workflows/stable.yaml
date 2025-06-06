@@ -48,7 +48,9 @@ jobs:
             (yum install -y openssl-devel pkgconfig) || \
             (apt-get update && apt-get install -y libssl-dev pkg-config) || \
             (apk add --no-cache openssl-dev pkgconfig)
-          CIBW_ENVIRONMENT: 'OPENSSL_DIR=/usr OPENSSL_NO_VENDOR=1'
+            curl https://sh.rustup.rs -sSf | sh -s -- -y
+            export PATH="$HOME/.cargo/bin:$PATH"
+          CIBW_ENVIRONMENT: 'OPENSSL_DIR=/usr OPENSSL_NO_VENDOR=1 PATH=$HOME/.cargo/bin:$PATH'
         run: cibuildwheel --output-dir dist
 
       - name: List built wheels
