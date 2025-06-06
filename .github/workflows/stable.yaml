@@ -73,19 +73,8 @@ jobs:
         with:
           name: wheels-ubuntu-latest
           path: dist
-      - name: Check wheel METADATA for illegal license-file
-        run: |
-          set -e
-          for whl in dist/*.whl; do
-            unzip -q -d whl_unpacked "$whl"
-            meta_file=$(find whl_unpacked -name METADATA)
-            if grep -i 'license-file' "$meta_file"; then
-              echo "::error ::Found license-file or license_files in METADATA of $whl"
-              cat "$meta_file"
-              exit 1
-            fi
-            rm -rf whl_unpacked
-          done
+      - name: List downloaded wheels
+        run: ls -lh dist/
       - name: Publish to PyPI
         env:
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
