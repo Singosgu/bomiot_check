@@ -29,4 +29,4 @@ classifiers = [
 [tool.maturin]
 module-name = "bomiot_check"
 features = ["pyo3/extension-module"]
-python = { source = "python_src" }
+python-source = "python_src"

@@ -93,10 +93,6 @@ jobs:
           path: dist
   linux:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
-        target: [x86_64, i686]
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -104,7 +100,20 @@ jobs:
         uses: astral-sh/setup-uv@v3
         with:
           version: "latest"
-      
+      - name: Install dependencies
+        run: pip install maturin build
+      - name: Build wheels for all Pythons
+        run: |
+          for PYBIN in /opt/python/cp{39,310,311,312,313}-cp*/bin/python; do
+            echo "Building for $PYBIN"
+            "$PYBIN" -m pip install --upgrade pip setuptools wheel
+            maturin build --release -i "$PYBIN" --out dist
+          done
+        env:
+          OPENSSL_DIR: /usr
+          OPENSSL_NO_VENDOR: "1"
+      - name: 列出列表
+        run: ls -lh dist/
       - name: Find openssl.pc
         run: |
           find /usr -name "openssl.pc"
