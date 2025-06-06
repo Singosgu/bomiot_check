@@ -42,7 +42,7 @@ jobs:
       - name: Build wheels
         env:
           # 如有需要可加额外依赖环境变量，比如
-          # CIBW_ENVIRONMENT: 'OPENSSL_DIR=/usr OPENSSL_NO_VENDOR=1'
+          CIBW_ENVIRONMENT: 'OPENSSL_DIR=/usr OPENSSL_NO_VENDOR=1'
         run: cibuildwheel --output-dir dist
 
       - name: List built wheels
