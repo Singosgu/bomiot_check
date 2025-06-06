@@ -197,14 +197,14 @@ jobs:
           PYO3_CROSS_LIB_DIR: /opt/python/${{ matrix.python.abi }}/lib
           PKG_CONFIG_PATH: /usr/lib/x86_64-linux-gnu/pkgconfig
           OPENSSL_DIR: /usr
-          OPENSSL_INCLUDE_DIR: /usr/include
+          OPENSSL_INCLUDE_DIR: /usr/include/x86_64-linux-gnu
           OPENSSL_LIB_DIR: /usr/lib/x86_64-linux-gnu
           OPENSSL_NO_VENDOR: "1"
         with:
           docker-options: |
             -e PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig
             -e OPENSSL_DIR=/usr
-            -e OPENSSL_INCLUDE_DIR=/usr/include
+            -e OPENSSL_INCLUDE_DIR=/usr/include/x86_64-linux-gnu
             -e OPENSSL_LIB_DIR=/usr/lib/x86_64-linux-gnu
             -e OPENSSL_NO_VENDOR=1
           before-script-linux: |
@@ -212,7 +212,7 @@ jobs:
             sudo apt-get update && sudo apt-get -y install pkg-config libssl-dev  
             ls /usr/lib/x86_64-linux-gnu/pkgconfig/openssl.pc
             sudo find /usr -name "openssl.pc"
-            ls /usr/include/openssl/opensslconf.h
+            ls /usr/include/x86_64-linux-gnu/openssl/opensslconf.h
             pkg-config --cflags openssl
             pkg-config --libs openssl
           target: ${{ matrix.target }}
