@@ -210,10 +210,11 @@ jobs:
             -e OPENSSL_NO_VENDOR=1
             -e PYO3_STATIC_LIB=1
           before-script-linux: |
-            sudo apt-get update && sudo apt-get -y install pkg-config libssl-dev  
             lsb_release -a
+            sudo apt-get update && sudo apt-get -y install pkg-config libssl-dev  
             ls /usr/lib/x86_64-linux-gnu/pkgconfig/openssl.pc
             sudo find /usr -name "openssl.pc"
+            pkg-config --libs --cflags openssl
           target: ${{ matrix.target }}
           manylinux: auto
           args: --release --out dist
