@@ -197,8 +197,8 @@ jobs:
           PYO3_CROSS_LIB_DIR: /opt/python/${{ matrix.python.abi }}/lib
         with:
           before-script-linux: |
-            apt update -y
-            apt install -y openssl-devel pkgconfig
+            yum update
+            yum install openssl-devel pkgconfig
             rustc --version
             find /usr -name "openssl.pc"
           target: ${{ matrix.target }}
