@@ -209,8 +209,9 @@ jobs:
             -e OPENSSL_NO_VENDOR=1
           before-script-linux: |
             lsb_release -a
-            apt-get update && apt-get -y install pkg-config libssl-dev  
-            ls /usr/lib/x86_64-linux-gnu/pkgconfig/openssl.pc
+            apt-get update && apt-get -y install pkg-config libssl-dev
+            mkdir -p $OPENSSL_INCLUDE_DIR/openssl
+            cp $OPENSSL_INCLUDE_DIR/opensslconf.h $OPENSSL_INCLUDE_DIR/openssl/opensslconf.h
             find /usr -name "openssl.pc"
             find /usr -name "opensslconf.h" 2>/dev/null
             pkg-config --libs openssl
