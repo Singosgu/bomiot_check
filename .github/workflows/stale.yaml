@@ -196,6 +196,9 @@ jobs:
         env:
           PYO3_CROSS_LIB_DIR: /opt/python/${{ matrix.python.abi }}/lib
         with:
+          before-script-linux: |
+            rustc --version
+            find /usr -name "openssl.pc"
           target: ${{ matrix.target }}
           manylinux: auto
           args: --release --out dist
