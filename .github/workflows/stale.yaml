@@ -120,18 +120,18 @@ jobs:
       - name: Build Wheels
         uses: PyO3/maturin-action@v1
         env:
-          PKG_CONFIG_PATH: /usr/lib/pkgconfig
+          PKG_CONFIG_PATH: /usr/lib64/pkgconfig
           OPENSSL_DIR: /usr
           OPENSSL_INCLUDE_DIR: /usr/include
-          OPENSSL_LIB_DIR: /usr/lib
+          OPENSSL_LIB_DIR: /usr/lib64
           OPENSSL_NO_VENDOR: "1"
           PYO3_STATIC_LIB: "1"
         with:
           docker-options: |
-            -e PKG_CONFIG_PATH=/usr/lib/pkgconfig
+            -e PKG_CONFIG_PATH=/usr/lib64/pkgconfig
             -e OPENSSL_DIR=/usr
             -e OPENSSL_INCLUDE_DIR=/usr/include
-            -e OPENSSL_LIB_DIR=/usr/lib
+            -e OPENSSL_LIB_DIR=/usr/lib64
             -e OPENSSL_NO_VENDOR=1
             -e PYO3_STATIC_LIB=1
           before-script-linux: |
