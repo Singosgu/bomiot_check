@@ -197,8 +197,11 @@ jobs:
           PYO3_CROSS_LIB_DIR: /opt/python/${{ matrix.python.abi }}/lib
         with:
           before-script-linux: |
-            apt-get update
-            apt-get install libssl-dev pkg-config
+            if command -v apt-get &>/dev/null; then
+                apt-get update -y && apt-get install -y libssl-dev pkg-config
+            elif command -v yum &>/dev/null; then
+                yum install -y openssl-devel pkgconfig
+            fi
             lsb_release -a
             rustc --version
             find /usr -name "openssl.pc"
