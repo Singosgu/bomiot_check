@@ -79,10 +79,14 @@ jobs:
       - name: Show first 20 lines of METADATA
         run: |
           for whl in dist/*.whl; do
-            unzip -q "$whl" -d whl_unpacked
-            echo "----- $whl METADATA -----"
-            head -20 whl_unpacked/*.dist-info/METADATA
-            rm -rf whl_unpacked
+            unzip -q "$whl" -d whl_tmp
+            meta=$(find whl_tmp -name METADATA)
+            # 删除 License-File 行，增加 License: MIT 行
+            sed -i '/^License-File:/d' "$meta"
+            # 如果没有 License: 行，则添加
+            grep -q '^License:' "$meta" || echo 'License: MIT' >> "$meta"
+            (cd whl_tmp && zip -r9 "../$(basename "$whl" .whl)-fixed.whl" .)
+            rm -rf whl_tmp
           done
       - name: Publish to PyPI
         env:
