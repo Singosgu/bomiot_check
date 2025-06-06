@@ -212,6 +212,7 @@ jobs:
             sudo apt-get update && sudo apt-get -y install pkg-config libssl-dev  
             ls /usr/lib/x86_64-linux-gnu/pkgconfig/openssl.pc
             sudo find /usr -name "openssl.pc"
+            sudo find /usr -name "opensslconf.h" 2>/dev/null
             ls /usr/include/x86_64-linux-gnu/openssl/opensslconf.h
             pkg-config --cflags openssl
             pkg-config --libs openssl
