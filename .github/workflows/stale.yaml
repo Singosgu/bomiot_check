@@ -143,6 +143,8 @@ jobs:
           target: ${{ matrix.target }}
           manylinux: auto
           args: --release --interpreter python${{ matrix.python-version }} --out dist
+      - name: 看看生成的文件
+        run: ls -lh dist/
       - name: Install build wheel
         run: |
           uv pip install --force-reinstall dist/*.whl
@@ -152,9 +154,6 @@ jobs:
         with:
           name: wheels-${{ github.job }}-${{ matrix.target }}-${{ matrix.python-version }}
           path: dist
-      - name: 第一次上传
-        run: 
-          ls -lh dist/
   merge:
     name: Building Single Artifact
     runs-on: ubuntu-latest
@@ -166,9 +165,6 @@ jobs:
           path: artifacts
           pattern: wheels-*
           merge-multiple: true
-      - name: 下载下来
-        run: 
-          ls -lh dist/
       - run: |
           echo "Listing directories"
           ls -R
@@ -177,10 +173,6 @@ jobs:
         with:
           name: wheels
           path: artifacts
-      - name: 第二次上传
-        run: 
-          ls -lh dist/
-
   release:
     name: Release
     runs-on: ubuntu-latest
@@ -189,9 +181,6 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: wheels
-      - name: 第二次下载
-        run: 
-          ls -lh dist/
       - name: Install uv
         uses: astral-sh/setup-uv@v3
       - uses: actions/setup-python@v5
