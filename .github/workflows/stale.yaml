@@ -67,12 +67,14 @@ jobs:
         run: |
           git clone https://github.com/Microsoft/vcpkg C:\vcpkg
           C:\vcpkg\bootstrap-vcpkg.bat
-          C:\vcpkg\vcpkg.exe install openssl:x64-windows
-      
-      - name: Set env vars
-        run: |
+          if [ "${{ matrix.target }}" = "x64" ]; then
+            C:\vcpkg\vcpkg.exe install openssl:x64-windows
+            echo "OPENSSL_DIR=C:\vcpkg\installed\x64-windows" >> $env:GITHUB_ENV
+          else
+            C:\vcpkg\vcpkg.exe install openssl:x86-windows
+            echo "OPENSSL_DIR=C:\vcpkg\installed\x86-windows" >> $env:GITHUB_ENV
+          fi
           echo "VCPKG_ROOT=C:\vcpkg" >> $env:GITHUB_ENV
-          echo "OPENSSL_DIR=C:\vcpkg\installed\x64-windows" >> $env:GITHUB_ENV
           echo "OPENSSL_NO_VENDOR=1" >> $env:GITHUB_ENV
       
       - uses: dtolnay/rust-toolchain@stable
