@@ -1,1 +1,1 @@
-1
+Bomiot Token
