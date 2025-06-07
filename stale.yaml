@@ -9,8 +9,8 @@ on:
 env:
   UV_SYSTEM_PYTHON: 1
 jobs:
-  macos13:
-    runs-on: macos-13
+  macos-latest:
+    runs-on: macos-latest
     strategy:
       matrix:
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
@@ -48,46 +48,7 @@ jobs:
         with:
           name: wheels-${{ github.job }}-universal-${{ matrix.python-version }}
           path: dist
-  macos14:
-    runs-on: macos-14
-    strategy:
-      matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install uv
-        uses: astral-sh/setup-uv@v3
-      - uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: aarch64-apple-darwin
-      - name: Upgrade pip and install build dependencies
-        run: |
-          uv pip install --upgrade pip
-          uv pip install maturin build twine
-      
-      - name: Build wheel (macOS)
-        uses: PyO3/maturin-action@v1
-        with:
-          args: --release --interpreter python${{ matrix.python-version }} --target universal2-apple-darwin --out dist
-        
-      - name: List wheels
-        run: ls -lh dist/
-        
-      - name: Install wheel (macOS)
-        run: uv pip install --force-reinstall dist/*.whl
-        
-      - name: Import test
-        run: python -c "from bomiot_check import get_mac_address_py; print(get_mac_address_py())"
-
-      - name: Upload wheels
-        uses: actions/upload-artifact@v4
-        with:
-          name: wheels-${{ github.job }}-universal-${{ matrix.python-version }}
-          path: dist
-  windows:
+  windows-latest:
     runs-on: windows-latest
     strategy:
       matrix:
@@ -133,7 +94,7 @@ jobs:
         with:
           name: wheels-${{ github.job }}-${{ matrix.target }}-${{ matrix.python-version }}
           path: dist
-  linux:
+  linux-latest:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -197,7 +158,7 @@ jobs:
   merge:
     name: Building Single Artifact
     runs-on: ubuntu-latest
-    needs: [macos13, macos14, windows, linux]
+    needs: [macos-latest, windows-latest, linux-latest]
     steps:
       - name: Downloading all Artifacts
         uses: actions/download-artifact@v4
@@ -216,7 +177,7 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    needs: [macos13, macos14, windows, linux, merge]
+    needs: [macos-latest, windows-latest, linux-latest, merge]
     steps:
       - uses: actions/download-artifact@v4
         with:
