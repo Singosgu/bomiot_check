@@ -11,6 +11,7 @@ readme = "README.md"
 homepage = "https://github.com/Bomiot/Bomiot"
 repository = "https://github.com/Bomiot/Bomiot"
 keywords = ["Bomiot", "bomiot"]
+requires-python = ">=3.9"
 include = [
     "LICENSE"
 ]
@@ -29,4 +30,3 @@ classifiers = [
 [tool.maturin]
 module-name = "bomiot_check"
 features = ["pyo3/extension-module"]
-python-source = "python_src"
