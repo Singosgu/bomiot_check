@@ -67,15 +67,16 @@ jobs:
         run: |
           git clone https://github.com/Microsoft/vcpkg C:\vcpkg
           C:\vcpkg\bootstrap-vcpkg.bat
-          if [ "${{ matrix.target }}" = "x64" ]; then
+          if ($env:matrix_target -eq "x64") {
             C:\vcpkg\vcpkg.exe install openssl:x64-windows
-            echo "OPENSSL_DIR=C:\vcpkg\installed\x64-windows" >> $env:GITHUB_ENV
-          else
+            echo "OPENSSL_DIR=C:\vcpkg\installed\x64-windows" | Out-File -FilePath $env:GITHUB_ENV -Append
+          }
+          else {
             C:\vcpkg\vcpkg.exe install openssl:x86-windows
-            echo "OPENSSL_DIR=C:\vcpkg\installed\x86-windows" >> $env:GITHUB_ENV
-          fi
-          echo "VCPKG_ROOT=C:\vcpkg" >> $env:GITHUB_ENV
-          echo "OPENSSL_NO_VENDOR=1" >> $env:GITHUB_ENV
+            echo "OPENSSL_DIR=C:\vcpkg\installed\x86-windows" | Out-File -FilePath $env:GITHUB_ENV -Append
+          }
+          echo "VCPKG_ROOT=C:\vcpkg" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "OPENSSL_NO_VENDOR=1" | Out-File -FilePath $env:GITHUB_ENV -Append
       
       - uses: dtolnay/rust-toolchain@stable
       - name: Build wheels
