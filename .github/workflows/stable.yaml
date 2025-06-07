@@ -75,7 +75,7 @@ jobs:
           pattern: wheels-*
           merge-multiple: true
       - name: List downloaded wheels
-        run: ls -lh dist/
+        run: ls -lh dist
 
       - name: Show first 20 lines of METADATA
         run: |
