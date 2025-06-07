@@ -32,7 +32,7 @@ jobs:
       - name: Build wheel (macOS)
         uses: PyO3/maturin-action@v1
         with:
-          args: --release --interpreter python${{ matrix.python-version }} --target x86_64-apple-darwin --out dist
+          args: --release --interpreter python${{ matrix.python-version }} --target universal2-apple-darwin --out dist
         
       - name: List wheels
         run: ls -lh dist/
@@ -71,7 +71,7 @@ jobs:
       - name: Build wheel (macOS)
         uses: PyO3/maturin-action@v1
         with:
-          args: --release --interpreter python${{ matrix.python-version }} --target x86_64-apple-darwin --out dist
+          args: --release --interpreter python${{ matrix.python-version }} --target universal2-apple-darwin --out dist
         
       - name: List wheels
         run: ls -lh dist/
